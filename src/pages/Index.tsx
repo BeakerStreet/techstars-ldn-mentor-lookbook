@@ -9,6 +9,20 @@ import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 
+// Example mentor data
+const exampleMentor: Mentor = {
+  id: 'example-mentor',
+  name: 'Sarah Johnson',
+  headshot: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1887&auto=format&fit=crop',
+  linkedinUrl: 'https://linkedin.com',
+  role: 'Chief Technology Officer',
+  company: 'TechInnovate',
+  bio: 'Sarah is a seasoned technology leader with over 15 years of experience in building and scaling startups. She specializes in AI, machine learning, and cloud infrastructure.',
+  expertise: ['Artificial Intelligence', 'Cloud Architecture', 'Team Building', 'Fundraising'],
+  email: 'example@techstars.com',
+  slug: 'sarah-johnson'
+};
+
 const Index = () => {
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,6 +51,9 @@ const Index = () => {
   useEffect(() => {
     loadMentors();
   }, []);
+
+  // Combine the example mentor with the fetched mentors
+  const allMentors = [exampleMentor, ...mentors];
 
   return (
     <AnimatedPageTransition>
@@ -77,10 +94,15 @@ const Index = () => {
               <p className="text-red-500 mb-4">{error}</p>
             </div>
           ) : mentors.length === 0 ? (
-            <div className="text-center text-techstars-slate">No mentors found. Please check your environment variables.</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <MentorCard key={exampleMentor.id} mentor={exampleMentor} index={0} />
+              <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-3 flex items-center justify-center">
+                <p className="text-techstars-slate">No mentors found from Airtable. Please check your environment variables.</p>
+              </div>
+            </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {mentors.map((mentor, index) => (
+              {allMentors.map((mentor, index) => (
                 <MentorCard key={mentor.id} mentor={mentor} index={index} />
               ))}
             </div>
