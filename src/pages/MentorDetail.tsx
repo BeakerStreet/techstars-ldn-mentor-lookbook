@@ -1,0 +1,150 @@
+
+import { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { fetchMentorBySlug } from '../services/airtableService';
+import { Mentor } from '../types/mentor';
+import Navbar from '../components/Navbar';
+import AnimatedPageTransition from '../components/AnimatedPageTransition';
+import { ArrowLeft, Linkedin, Mail } from 'lucide-react';
+
+const MentorDetail = () => {
+  const { slug } = useParams<{ slug: string }>();
+  const [mentor, setMentor] = useState<Mentor | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadMentor = async () => {
+      if (!slug) return;
+      
+      try {
+        setLoading(true);
+        const data = await fetchMentorBySlug(slug);
+        setMentor(data);
+        if (!data) {
+          setError('Mentor not found');
+        }
+      } catch (err) {
+        setError('Failed to load mentor details. Please try again later.');
+        console.error('Error loading mentor:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMentor();
+  }, [slug]);
+
+  return (
+    <AnimatedPageTransition>
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+        <Navbar />
+        
+        <main className="max-w-5xl mx-auto px-6 md:px-12 pb-20">
+          <Link 
+            to="/" 
+            className="inline-flex items-center py-2 px-4 mb-8 text-sm hover:text-techstars-phosphor transition-colors duration-300"
+          >
+            <ArrowLeft size={16} className="mr-2" />
+            Back to all mentors
+          </Link>
+
+          {loading ? (
+            <div className="flex justify-center items-center min-h-[300px]">
+              <div className="w-16 h-16 border-4 border-gray-200 border-t-techstars-phosphor rounded-full animate-spin"></div>
+            </div>
+          ) : error ? (
+            <div className="text-center text-red-500 py-20">{error}</div>
+          ) : mentor ? (
+            <div className="grid md:grid-cols-[1fr,2fr] gap-8 animate-fade-in">
+              <div className="space-y-6">
+                <div className="overflow-hidden rounded-xl shadow-lg">
+                  <img 
+                    src={mentor.headshot} 
+                    alt={mentor.name} 
+                    className="mentor-image w-full aspect-square object-cover"
+                  />
+                </div>
+                
+                <div className="flex flex-col space-y-4">
+                  <h3 className="text-lg font-semibold">Connect</h3>
+                  
+                  <a 
+                    href={mentor.linkedinUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg bg-white shadow-sm hover:shadow transition-shadow duration-300"
+                  >
+                    <div className="p-2 bg-[#0077B5]/10 rounded-md text-[#0077B5]">
+                      <Linkedin size={20} />
+                    </div>
+                    <span>LinkedIn Profile</span>
+                  </a>
+                  
+                  {mentor.email && (
+                    <a 
+                      href={`mailto:${mentor.email}`}
+                      className="flex items-center gap-3 p-3 rounded-lg bg-white shadow-sm hover:shadow transition-shadow duration-300"
+                    >
+                      <div className="p-2 bg-techstars-phosphor/10 rounded-md text-techstars-phosphor">
+                        <Mail size={20} />
+                      </div>
+                      <span>Send Email</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+              
+              <div className="space-y-8">
+                <div>
+                  <div className="inline-block px-3 py-1 text-xs rounded-full bg-techstars-phosphor/10 text-techstars-phosphor font-medium mb-2">
+                    Techstars Mentor
+                  </div>
+                  <h1 className="text-3xl md:text-4xl font-bold mb-2">{mentor.name}</h1>
+                  {mentor.role && mentor.company && (
+                    <p className="text-techstars-slate text-lg">
+                      {mentor.role} at {mentor.company}
+                    </p>
+                  )}
+                </div>
+                
+                {mentor.bio && (
+                  <div>
+                    <h2 className="text-xl font-semibold mb-3">Bio</h2>
+                    <p className="text-gray-700 leading-relaxed">{mentor.bio}</p>
+                  </div>
+                )}
+                
+                {mentor.expertise && mentor.expertise.length > 0 && (
+                  <div>
+                    <h2 className="text-xl font-semibold mb-3">Areas of Expertise</h2>
+                    <div className="flex flex-wrap gap-2">
+                      {mentor.expertise.map((skill, index) => (
+                        <span 
+                          key={index} 
+                          className="px-3 py-1 bg-gray-100 rounded-full text-sm"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="text-center text-techstars-slate py-20">Mentor not found</div>
+          )}
+        </main>
+        
+        <footer className="py-8 border-t border-gray-100 text-center text-sm text-techstars-slate">
+          <div className="max-w-7xl mx-auto px-6">
+            <p>© {new Date().getFullYear()} Techstars London. All rights reserved.</p>
+          </div>
+        </footer>
+      </div>
+    </AnimatedPageTransition>
+  );
+};
+
+export default MentorDetail;
