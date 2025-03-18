@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Mentor } from '../types/mentor';
 import { Linkedin } from 'lucide-react';
@@ -18,8 +17,9 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
       style={{ 
         animationDelay, 
         animation: 'scale-in 0.5s ease-out forwards',
-        opacity: 0,
-        transform: 'scale(0.95)' 
+        opacity: 1,
+        transform: 'scale(1)',
+        visibility: 'visible'
       }}
     >
       <div className="aspect-[3/4] overflow-hidden">
@@ -31,12 +31,29 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
         />
       </div>
       
-      <div className="p-4 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent text-white">
+      <div className="p-4 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent text-white">
         <div className="flex justify-between items-end">
-          <div>
-            <h3 className="text-lg font-medium mb-1">{mentor.name}</h3>
+          <div className="space-y-1">
+            <h3 className="text-lg font-medium">{mentor.name}</h3>
             {mentor.role && mentor.company && (
-              <p className="text-xs text-white/80">{mentor.role} at {mentor.company}</p>
+              <p className="text-sm text-white/90">{mentor.role} at {mentor.company}</p>
+            )}
+            {mentor.expertise && mentor.expertise.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {mentor.expertise.slice(0, 2).map((skill, index) => (
+                  <span 
+                    key={index}
+                    className="text-xs px-2 py-0.5 bg-white/20 rounded-full"
+                  >
+                    {skill}
+                  </span>
+                ))}
+                {mentor.expertise.length > 2 && (
+                  <span className="text-xs px-2 py-0.5 bg-white/20 rounded-full">
+                    +{mentor.expertise.length - 2} more
+                  </span>
+                )}
+              </div>
             )}
           </div>
           

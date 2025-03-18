@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { fetchMentors, isAirtableConfigured } from '../services/airtableService';
 import { Mentor } from '../types/mentor';
@@ -53,7 +52,6 @@ const Index = () => {
     loadMentors();
   }, []);
 
-  // Always ensure example mentor is first, regardless of API status
   const displayMentors = () => {
     if (loading) {
       return (
@@ -63,21 +61,32 @@ const Index = () => {
       );
     }
     
-    // Always display the example mentor at minimum
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <MentorCard key={exampleMentor.id} mentor={exampleMentor} index={0} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 min-h-[400px]">
+        <div className="relative">
+          <div className="absolute -top-3 -right-3 z-10">
+            <span className="px-2 py-1 text-xs bg-techstars-phosphor text-white rounded-full">
+              Example
+            </span>
+          </div>
+          <MentorCard key={exampleMentor.id} mentor={exampleMentor} index={0} />
+        </div>
         
         {error ? (
-          <div className="col-span-1 sm:col-span-3 flex items-center">
-            <p className="text-red-500">{error}</p>
+          <div className="col-span-full sm:col-span-3 flex items-center justify-center p-6 bg-red-50 rounded-lg">
+            <div className="text-center">
+              <p className="text-red-500 font-medium mb-2">{error}</p>
+              <p className="text-sm text-gray-600">Please check your Airtable configuration in the .env file</p>
+            </div>
           </div>
         ) : mentors.length === 0 ? (
-          <div className="col-span-1 sm:col-span-3 flex items-center">
-            <p className="text-techstars-slate">No additional mentors found from Airtable.</p>
+          <div className="col-span-full sm:col-span-3 flex items-center justify-center p-6 bg-gray-50 rounded-lg">
+            <div className="text-center">
+              <p className="text-techstars-slate font-medium mb-2">No additional mentors found from Airtable</p>
+              <p className="text-sm text-gray-600">Add mentors to your Airtable base to see them here</p>
+            </div>
           </div>
         ) : (
-          // Display fetched mentors after the example mentor
           mentors.map((mentor, index) => (
             <MentorCard key={mentor.id} mentor={mentor} index={index + 1} />
           ))
