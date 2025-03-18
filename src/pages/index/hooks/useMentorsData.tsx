@@ -11,20 +11,6 @@ export const useMentorsData = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  // Example mentor for reference - used to derive constant values
-  const exampleMentor: Mentor = {
-    id: 'example-mentor',
-    name: 'Sarah Johnson',
-    headshot: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1887&auto=format&fit=crop',
-    linkedinUrl: 'https://linkedin.com',
-    role: 'Chief Technology Officer',
-    company: 'TechInnovate',
-    bio: 'Sarah is a seasoned technology leader with over 15 years of experience in building and scaling startups. She specializes in AI, machine learning, and cloud infrastructure.',
-    expertise: ['Artificial Intelligence', 'Cloud Architecture', 'Team Building', 'Fundraising'],
-    email: 'example@techstars.com',
-    slug: 'sarah-johnson'
-  };
-
   const loadMentors = async () => {
     try {
       setLoading(true);
@@ -54,9 +40,6 @@ export const useMentorsData = () => {
   const availableDates = useMemo(() => {
     const dateSet = new Set<string>();
     
-    // Add example mentor's date if it exists
-    if (exampleMentor.date) dateSet.add(exampleMentor.date);
-    
     // Add Airtable mentors' dates
     mentors.forEach(mentor => {
       if (mentor.date) dateSet.add(mentor.date);
@@ -68,10 +51,6 @@ export const useMentorsData = () => {
   // Get unique tags from all mentors
   const allTags = useMemo(() => {
     const tagSet = new Set<string>();
-    
-    // Add example mentor's tags
-    exampleMentor.expertise?.forEach(tag => tagSet.add(tag));
-    exampleMentor.industries?.forEach(tag => tagSet.add(tag));
     
     // Add Airtable mentors' tags
     mentors.forEach(mentor => {

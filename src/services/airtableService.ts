@@ -1,3 +1,4 @@
+
 import { Mentor } from '../types/mentor';
 
 // Get configuration from environment variables
@@ -32,7 +33,9 @@ export async function fetchMentors(): Promise<Mentor[]> {
     // Clean up the tableName in case it contains any slashes or extra path segments
     const cleanTableName = tableName.split('/')[0].split('?')[0].trim();
     
-    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}`;
+    // Add filter for Status field
+    const filterByFormula = encodeURIComponent("Status='Booked - March 2025'");
+    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}?filterByFormula=${filterByFormula}`;
     
     const response = await fetch(url, {
       headers: {
