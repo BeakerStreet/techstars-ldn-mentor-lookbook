@@ -1,24 +1,41 @@
 
 import { Mentor } from '../types/mentor';
+import { toast } from 'sonner';
 
-// This token will be replaced by the user's actual token
-const AIRTABLE_API_TOKEN = 'your_airtable_token_here';
-const AIRTABLE_BASE_ID = 'your_base_id_here';
-const MENTORS_TABLE_NAME = 'Mentors';
+// Get tokens from localStorage or use placeholders
+export const getAirtableConfig = () => {
+  return {
+    token: localStorage.getItem('airtable_token') || '',
+    baseId: localStorage.getItem('airtable_base_id') || '',
+    tableName: localStorage.getItem('airtable_table_name') || 'Mentors'
+  };
+};
+
+export const isAirtableConfigured = () => {
+  const { token, baseId } = getAirtableConfig();
+  return !!token && !!baseId;
+};
 
 export async function fetchMentors(): Promise<Mentor[]> {
+  const { token, baseId, tableName } = getAirtableConfig();
+  
+  if (!token || !baseId) {
+    toast.error('Airtable API credentials not configured');
+    return [];
+  }
+
   try {
     const response = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${MENTORS_TABLE_NAME}`,
+      `https://api.airtable.com/v0/${baseId}/${tableName}`,
       {
         headers: {
-          Authorization: `Bearer ${AIRTABLE_API_TOKEN}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
 
     if (!response.ok) {
-      throw new Error('Failed to fetch mentors from Airtable');
+      throw new Error(`Failed to fetch mentors: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
@@ -37,6 +54,7 @@ export async function fetchMentors(): Promise<Mentor[]> {
     }));
   } catch (error) {
     console.error('Error fetching mentors:', error);
+    toast.error('Failed to fetch mentors from Airtable');
     return [];
   }
 }
