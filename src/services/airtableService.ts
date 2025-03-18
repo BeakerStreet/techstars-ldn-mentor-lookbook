@@ -1,3 +1,4 @@
+
 import { Mentor } from '../types/mentor';
 
 // Get configuration from environment variables
@@ -25,7 +26,7 @@ export async function fetchMentors(): Promise<Mentor[]> {
   const { token, baseId, tableName } = getAirtableConfig();
   
   if (!token || !baseId) {
-    throw new AirtableError('Airtable API credentials not configured');
+    throw new AirtableError('Airtable API credentials not configured in environment variables');
   }
 
   try {

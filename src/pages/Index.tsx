@@ -5,15 +5,14 @@ import { Mentor } from '../types/mentor';
 import MentorCard from '../components/MentorCard';
 import Navbar from '../components/Navbar';
 import AnimatedPageTransition from '../components/AnimatedPageTransition';
-import AirtableSettings from '../components/AirtableSettings';
 import { Button } from '@/components/ui/button';
-import { Settings, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Index = () => {
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [settingsOpen, setSettingsOpen] = useState(!isAirtableConfigured());
 
   const loadMentors = async () => {
     try {
@@ -23,11 +22,13 @@ const Index = () => {
         const data = await fetchMentors();
         setMentors(data);
       } else {
-        setError('Airtable API credentials not configured');
+        setError('Airtable API credentials not configured in environment variables');
+        toast.error('Missing Airtable API credentials in environment variables');
       }
     } catch (err) {
-      setError('Failed to load mentors. Please try again later.');
+      setError('Failed to load mentors. Please check your environment variables and try again.');
       console.error('Error loading mentors:', err);
+      toast.error('Failed to load mentors. Please check your environment variables.');
     } finally {
       setLoading(false);
     }
@@ -54,16 +55,7 @@ const Index = () => {
               Connect with our exceptional mentors who are ready to guide you through your entrepreneurial journey.
             </p>
             
-            <div className="mt-4 flex justify-center gap-2">
-              <Button 
-                onClick={() => setSettingsOpen(true)}
-                variant="outline"
-                className="flex items-center gap-2"
-              >
-                <Settings size={16} />
-                Airtable Settings
-              </Button>
-              
+            <div className="mt-4 flex justify-center">
               <Button 
                 onClick={loadMentors}
                 variant="outline"
@@ -83,12 +75,9 @@ const Index = () => {
           ) : error ? (
             <div className="text-center">
               <p className="text-red-500 mb-4">{error}</p>
-              <Button onClick={() => setSettingsOpen(true)} className="bg-techstars-phosphor hover:bg-techstars-phosphor/90">
-                Configure Airtable
-              </Button>
             </div>
           ) : mentors.length === 0 ? (
-            <div className="text-center text-techstars-slate">No mentors found. Please check your Airtable configuration.</div>
+            <div className="text-center text-techstars-slate">No mentors found. Please check your environment variables.</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {mentors.map((mentor, index) => (
@@ -97,8 +86,6 @@ const Index = () => {
             </div>
           )}
         </main>
-        
-        <AirtableSettings open={settingsOpen} onOpenChange={setSettingsOpen} />
         
         <footer className="py-8 border-t border-gray-100 text-center text-sm text-techstars-slate">
           <div className="max-w-7xl mx-auto px-6">
