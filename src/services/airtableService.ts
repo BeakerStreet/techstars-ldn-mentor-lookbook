@@ -1,6 +1,4 @@
-
 import { Mentor } from '../types/mentor';
-import { toast } from 'sonner';
 
 // Get tokens from localStorage or use placeholders
 export const getAirtableConfig = () => {
@@ -20,7 +18,7 @@ export async function fetchMentors(): Promise<Mentor[]> {
   const { token, baseId, tableName } = getAirtableConfig();
   
   if (!token || !baseId) {
-    toast.error('Airtable API credentials not configured');
+    console.error('Airtable API credentials not configured');
     return [];
   }
 
@@ -61,7 +59,6 @@ export async function fetchMentors(): Promise<Mentor[]> {
     }));
   } catch (error) {
     console.error('Error fetching mentors:', error);
-    toast.error('Failed to fetch mentors from Airtable');
     return [];
   }
 }
