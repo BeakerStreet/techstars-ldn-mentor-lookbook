@@ -1,10 +1,12 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchMentorBySlug } from '../services/airtableService';
+import { generateMentorDescription } from '../services/exaService';
 import { Mentor } from '../types/mentor';
 import Navbar from '../components/Navbar';
 import AnimatedPageTransition from '../components/AnimatedPageTransition';
-import { ArrowLeft, Linkedin, Mail } from 'lucide-react';
+import { ArrowLeft, Linkedin, Mail, Sparkles } from 'lucide-react';
+import { toast } from 'sonner';
 
 // Fun placeholder images for mentors without headshots
 const placeholderImages = [
@@ -19,6 +21,8 @@ const MentorDetail = () => {
   const [mentor, setMentor] = useState<Mentor | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [aiDescription, setAiDescription] = useState<string | null>(null);
+  const [generatingDescription, setGeneratingDescription] = useState(false);
 
   useEffect(() => {
     const loadMentor = async () => {
@@ -55,6 +59,22 @@ const MentorDetail = () => {
     const placeholderIndex = nameSum % placeholderImages.length;
     return placeholderImages[placeholderIndex];
   }, [mentor]);
+
+  const handleGenerateDescription = async () => {
+    if (!mentor) return;
+    
+    try {
+      setGeneratingDescription(true);
+      const description = await generateMentorDescription(mentor);
+      setAiDescription(description);
+      toast.success('AI description generated successfully!');
+    } catch (err) {
+      toast.error('Failed to generate AI description. Please try again later.');
+      console.error('Error generating description:', err);
+    } finally {
+      setGeneratingDescription(false);
+    }
+  };
 
   return (
     <AnimatedPageTransition>
@@ -93,8 +113,15 @@ const MentorDetail = () => {
                 </div>
                 
                 <div className="flex flex-col space-y-4">
-                  <h3 className="text-lg font-semibold">Connect</h3>
-                  
+                  <button
+                    onClick={handleGenerateDescription}
+                    disabled={generatingDescription}
+                    className="flex items-center justify-center gap-2 p-3 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-sm hover:shadow transition-shadow duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Sparkles size={20} />
+                    {generatingDescription ? 'Generating...' : 'Generate AI Description'}
+                  </button>
+
                   <a 
                     href={mentor.linkedinUrl} 
                     target="_blank" 
@@ -133,6 +160,16 @@ const MentorDetail = () => {
                     </p>
                   )}
                 </div>
+                
+                {aiDescription && (
+                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-xl border border-purple-100">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Sparkles size={18} className="text-purple-500" />
+                      <h2 className="text-xl font-semibold text-purple-900">AI-Generated Description</h2>
+                    </div>
+                    <p className="text-gray-700 leading-relaxed">{aiDescription}</p>
+                  </div>
+                )}
                 
                 {mentor.bio && (
                   <div>
