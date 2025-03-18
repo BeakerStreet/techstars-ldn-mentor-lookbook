@@ -1,15 +1,37 @@
+
 import { Link } from 'react-router-dom';
 import { Mentor } from '../types/mentor';
 import { Linkedin } from 'lucide-react';
+import { useMemo } from 'react';
 
 interface MentorCardProps {
   mentor: Mentor;
   index: number;
 }
 
+// Fun placeholder images for mentors without headshots
+const placeholderImages = [
+  "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&fit=crop", // robot
+  "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=600&fit=crop", // cat
+  "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=600&fit=crop", // deer
+  "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=600&fit=crop", // kitten
+];
+
 const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
   // Staggered animation delay based on index
   const animationDelay = `${index * 0.05}s`;
+
+  // Generate a deterministic random placeholder based on the mentor's name
+  const placeholderImage = useMemo(() => {
+    if (mentor.headshot && mentor.headshot !== '/placeholder.svg') {
+      return mentor.headshot;
+    }
+    
+    // Use the mentor's name to generate a consistent index for the placeholder
+    const nameSum = mentor.name.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const placeholderIndex = nameSum % placeholderImages.length;
+    return placeholderImages[placeholderIndex];
+  }, [mentor.name, mentor.headshot]);
 
   return (
     <Link 
@@ -28,11 +50,16 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
       >
         <div className="aspect-[3/4] overflow-hidden">
           <img 
-            src={mentor.headshot} 
+            src={placeholderImage} 
             alt={mentor.name} 
             className="mentor-image w-full h-full object-cover"
             loading="lazy"
           />
+          {!mentor.headshot || mentor.headshot === '/placeholder.svg' ? (
+            <div className="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+              AI Generated
+            </div>
+          ) : null}
         </div>
         
         <div className="p-4 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent text-white">

@@ -1,11 +1,19 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchMentorBySlug } from '../services/airtableService';
 import { Mentor } from '../types/mentor';
 import Navbar from '../components/Navbar';
 import AnimatedPageTransition from '../components/AnimatedPageTransition';
 import { ArrowLeft, Linkedin, Mail } from 'lucide-react';
+
+// Fun placeholder images for mentors without headshots
+const placeholderImages = [
+  "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&fit=crop", // robot
+  "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=800&fit=crop", // cat
+  "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&fit=crop", // deer
+  "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=800&fit=crop", // kitten
+];
 
 const MentorDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -34,6 +42,20 @@ const MentorDetail = () => {
 
     loadMentor();
   }, [slug]);
+  
+  // Generate a deterministic random placeholder based on the mentor's name
+  const mentorImage = useMemo(() => {
+    if (!mentor) return placeholderImages[0];
+    
+    if (mentor.headshot && mentor.headshot !== '/placeholder.svg') {
+      return mentor.headshot;
+    }
+    
+    // Use the mentor's name to generate a consistent index for the placeholder
+    const nameSum = mentor.name.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const placeholderIndex = nameSum % placeholderImages.length;
+    return placeholderImages[placeholderIndex];
+  }, [mentor]);
 
   return (
     <AnimatedPageTransition>
@@ -58,12 +80,17 @@ const MentorDetail = () => {
           ) : mentor ? (
             <div className="grid md:grid-cols-[1fr,2fr] gap-8 animate-fade-in">
               <div className="space-y-6">
-                <div className="overflow-hidden rounded-xl shadow-lg">
+                <div className="overflow-hidden rounded-xl shadow-lg relative">
                   <img 
-                    src={mentor.headshot} 
+                    src={mentorImage} 
                     alt={mentor.name} 
                     className="mentor-image w-full aspect-square object-cover"
                   />
+                  {(!mentor.headshot || mentor.headshot === '/placeholder.svg') && (
+                    <div className="absolute top-4 right-4 bg-blue-500 text-white text-xs px-3 py-1 rounded-full">
+                      AI Generated
+                    </div>
+                  )}
                 </div>
                 
                 <div className="flex flex-col space-y-4">
