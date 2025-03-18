@@ -25,8 +25,11 @@ export async function fetchMentors(): Promise<Mentor[]> {
   }
 
   try {
-    // Fix the URL construction - remove any path segments beyond the table name
-    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}`;
+    // Clean up the tableName in case it contains any slashes or extra path segments
+    // Only use the base table name without any view IDs or additional paths
+    const cleanTableName = tableName.split('/')[0].split('?')[0].trim();
+    
+    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}`;
     console.log('Fetching from Airtable URL:', url);
     
     const response = await fetch(url, {

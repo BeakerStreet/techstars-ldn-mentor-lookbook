@@ -21,7 +21,8 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
+  FormDescription
 } from "@/components/ui/form";
 
 const formSchema = z.object({
@@ -84,6 +85,9 @@ const AirtableSettings: React.FC<AirtableSettingsProps> = ({ open, onOpenChange 
                       {...field} 
                     />
                   </FormControl>
+                  <FormDescription>
+                    Your Airtable personal access token
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -101,6 +105,9 @@ const AirtableSettings: React.FC<AirtableSettingsProps> = ({ open, onOpenChange 
                       {...field} 
                     />
                   </FormControl>
+                  <FormDescription>
+                    The ID of your Airtable base (starts with 'app')
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -118,6 +125,9 @@ const AirtableSettings: React.FC<AirtableSettingsProps> = ({ open, onOpenChange 
                       {...field} 
                     />
                   </FormControl>
+                  <FormDescription>
+                    Enter only the table name without any view IDs or paths (e.g., "Mentors")
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
