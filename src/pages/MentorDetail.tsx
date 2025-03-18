@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchMentorBySlug } from '../services/airtableService';
@@ -88,7 +87,7 @@ const MentorDetail = () => {
                   />
                   {(!mentor.headshot || mentor.headshot === '/placeholder.svg') && (
                     <div className="absolute top-4 right-4 bg-blue-500 text-white text-xs px-3 py-1 rounded-full">
-                      AI Generated
+                      May Look Different
                     </div>
                   )}
                 </div>

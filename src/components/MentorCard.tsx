@@ -57,7 +57,7 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
           />
           {!mentor.headshot || mentor.headshot === '/placeholder.svg' ? (
             <div className="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-              AI Generated
+              May Look Different
             </div>
           ) : null}
         </div>
