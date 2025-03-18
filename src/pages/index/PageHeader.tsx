@@ -17,7 +17,7 @@ const PageHeader = ({ onRefresh, loading }: PageHeaderProps) => {
         Techstars London Mentors
       </h1>
       <p className="text-techstars-slate max-w-2xl mx-auto animate-slide-down" style={{ animationDelay: '0.1s' }}>
-        Connect with our exceptional mentors who are ready to guide you through your entrepreneurial journey.
+        Tech leaders, founders, engineers, investors, customers, and startup guides from across Europe and around the world
       </p>
       
       <div className="mt-4 flex justify-center">
