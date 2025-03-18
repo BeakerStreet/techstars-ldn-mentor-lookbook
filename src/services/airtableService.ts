@@ -25,9 +25,8 @@ export async function fetchMentors(): Promise<Mentor[]> {
   }
 
   try {
-    // The correct URL format for Airtable API is: https://api.airtable.com/v0/{baseId}/{tableName}
-    // No need for additional path segments
-    const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+    // Fix the URL construction - remove any path segments beyond the table name
+    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}`;
     console.log('Fetching from Airtable URL:', url);
     
     const response = await fetch(url, {
