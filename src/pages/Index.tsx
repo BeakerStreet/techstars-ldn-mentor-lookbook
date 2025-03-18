@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Example mentor data
+// Example mentor data - always shown regardless of Airtable status
 const exampleMentor: Mentor = {
   id: 'example-mentor',
   name: 'Sarah Johnson',
@@ -32,6 +32,7 @@ const Index = () => {
     try {
       setLoading(true);
       setError(null);
+      
       if (isAirtableConfigured()) {
         const data = await fetchMentors();
         setMentors(data);
@@ -52,8 +53,38 @@ const Index = () => {
     loadMentors();
   }, []);
 
-  // Always combine the example mentor with the fetched mentors
-  const allMentors = [exampleMentor, ...(mentors || [])];
+  // Always ensure example mentor is first, regardless of API status
+  const displayMentors = () => {
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center min-h-[300px]">
+          <div className="w-16 h-16 border-4 border-gray-200 border-t-techstars-phosphor rounded-full animate-spin"></div>
+        </div>
+      );
+    }
+    
+    // Always display the example mentor at minimum
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <MentorCard key={exampleMentor.id} mentor={exampleMentor} index={0} />
+        
+        {error ? (
+          <div className="col-span-1 sm:col-span-3 flex items-center">
+            <p className="text-red-500">{error}</p>
+          </div>
+        ) : mentors.length === 0 ? (
+          <div className="col-span-1 sm:col-span-3 flex items-center">
+            <p className="text-techstars-slate">No additional mentors found from Airtable.</p>
+          </div>
+        ) : (
+          // Display fetched mentors after the example mentor
+          mentors.map((mentor, index) => (
+            <MentorCard key={mentor.id} mentor={mentor} index={index + 1} />
+          ))
+        )}
+      </div>
+    );
+  };
 
   return (
     <AnimatedPageTransition>
@@ -85,31 +116,7 @@ const Index = () => {
             </div>
           </div>
 
-          {loading ? (
-            <div className="flex justify-center items-center min-h-[300px]">
-              <div className="w-16 h-16 border-4 border-gray-200 border-t-techstars-phosphor rounded-full animate-spin"></div>
-            </div>
-          ) : error ? (
-            <div className="text-center">
-              <p className="text-red-500 mb-4">{error}</p>
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <MentorCard key={exampleMentor.id} mentor={exampleMentor} index={0} />
-              </div>
-            </div>
-          ) : mentors.length === 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              <MentorCard key={exampleMentor.id} mentor={exampleMentor} index={0} />
-              <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-3 flex items-center justify-center">
-                <p className="text-techstars-slate">No mentors found from Airtable. Please check your environment variables.</p>
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {allMentors.map((mentor, index) => (
-                <MentorCard key={mentor.id} mentor={mentor} index={index} />
-              ))}
-            </div>
-          )}
+          {displayMentors()}
         </main>
         
         <footer className="py-8 border-t border-gray-100 text-center text-sm text-techstars-slate">

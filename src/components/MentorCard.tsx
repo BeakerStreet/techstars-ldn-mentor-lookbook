@@ -18,7 +18,8 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
       style={{ 
         animationDelay, 
         animation: 'scale-in 0.5s ease-out forwards',
-        opacity: 0 
+        opacity: 0,
+        transform: 'scale(0.95)' 
       }}
     >
       <div className="aspect-[3/4] overflow-hidden">
