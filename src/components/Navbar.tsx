@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
@@ -15,11 +14,14 @@ const Navbar = () => {
           <span>Techstars London</span>
         </Link>
         
-        <div className="text-sm text-techstars-slate animate-fade-in">
-          <div className="px-3 py-1 rounded-full border border-techstars-slate/30">
+        <Link 
+          to="/"
+          className="text-sm text-techstars-slate animate-fade-in hover:text-techstars-phosphor transition-colors duration-300"
+        >
+          <div className="px-3 py-1 rounded-full border border-techstars-slate/30 hover:border-techstars-phosphor/30">
             Mentor Lookbook
           </div>
-        </div>
+        </Link>
       </div>
     </nav>
   );

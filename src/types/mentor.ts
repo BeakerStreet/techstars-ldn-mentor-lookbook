@@ -1,4 +1,3 @@
-
 export interface Mentor {
   id: string;
   name: string;
@@ -10,4 +9,5 @@ export interface Mentor {
   expertise?: string[];
   email?: string;
   slug: string;
+  industries?: string[];
 }

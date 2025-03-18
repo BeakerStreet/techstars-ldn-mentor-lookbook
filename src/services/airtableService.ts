@@ -1,4 +1,3 @@
-
 import { Mentor } from '../types/mentor';
 
 // Get configuration from environment variables
@@ -69,7 +68,8 @@ export async function fetchMentors(): Promise<Mentor[]> {
       bio: record.fields.Bio || '',
       expertise: record.fields.Expertise || [],
       email: record.fields.Email || '',
-      slug: createSlug(record.fields.Name || 'mentor')
+      slug: createSlug(record.fields.Name || 'mentor'),
+      industries: record.fields['Industries of Interest'] || []
     }));
   } catch (error) {
     if (error instanceof AirtableError) {
