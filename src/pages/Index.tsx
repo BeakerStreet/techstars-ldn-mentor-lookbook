@@ -52,8 +52,8 @@ const Index = () => {
     loadMentors();
   }, []);
 
-  // Combine the example mentor with the fetched mentors
-  const allMentors = [exampleMentor, ...mentors];
+  // Always combine the example mentor with the fetched mentors
+  const allMentors = [exampleMentor, ...(mentors || [])];
 
   return (
     <AnimatedPageTransition>
@@ -92,6 +92,9 @@ const Index = () => {
           ) : error ? (
             <div className="text-center">
               <p className="text-red-500 mb-4">{error}</p>
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <MentorCard key={exampleMentor.id} mentor={exampleMentor} index={0} />
+              </div>
             </div>
           ) : mentors.length === 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

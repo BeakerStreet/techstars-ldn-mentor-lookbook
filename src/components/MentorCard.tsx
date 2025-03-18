@@ -14,7 +14,7 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
 
   return (
     <div 
-      className="glass card-hover overflow-hidden relative rounded-xl"
+      className="glass card-hover overflow-hidden relative rounded-xl border border-gray-100 shadow-sm"
       style={{ 
         animationDelay, 
         animation: 'scale-in 0.5s ease-out forwards',
@@ -25,7 +25,7 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
         <img 
           src={mentor.headshot} 
           alt={mentor.name} 
-          className="mentor-image w-full h-full"
+          className="mentor-image w-full h-full object-cover"
           loading="lazy"
         />
       </div>
