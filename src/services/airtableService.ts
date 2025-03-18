@@ -69,7 +69,8 @@ export async function fetchMentors(): Promise<Mentor[]> {
       expertise: record.fields.Expertise || [],
       email: record.fields.Email || '',
       slug: createSlug(record.fields.Name || 'mentor'),
-      industries: record.fields['Industries of Interest'] || []
+      industries: record.fields['Industries of Interest'] || [],
+      date: record.fields.Date || ''
     }));
   } catch (error) {
     if (error instanceof AirtableError) {

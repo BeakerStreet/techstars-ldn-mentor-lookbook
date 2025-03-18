@@ -10,4 +10,5 @@ export interface Mentor {
   email?: string;
   slug: string;
   industries?: string[];
+  date?: string;
 }
