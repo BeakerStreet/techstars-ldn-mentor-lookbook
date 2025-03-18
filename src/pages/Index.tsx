@@ -174,7 +174,7 @@ const Index = () => {
         <main className="max-w-7xl mx-auto px-6 md:px-12 pb-36">
           <div className="text-center mb-12 mt-8">
             <div className="inline-block px-3 py-1 text-xs rounded-full bg-techstars-phosphor/10 text-techstars-phosphor font-medium mb-3 animate-fade-in">
-              Meet Our Network
+              Meet Your Mentors
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-slide-down">
               Techstars London Mentors
