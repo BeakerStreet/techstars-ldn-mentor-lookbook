@@ -7,7 +7,7 @@ import Navbar from '../components/Navbar';
 import AnimatedPageTransition from '../components/AnimatedPageTransition';
 import AirtableSettings from '../components/AirtableSettings';
 import { Button } from '@/components/ui/button';
-import { Settings } from 'lucide-react';
+import { Settings, RefreshCw } from 'lucide-react';
 
 const Index = () => {
   const [mentors, setMentors] = useState<Mentor[]>([]);
@@ -15,24 +15,25 @@ const Index = () => {
   const [error, setError] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(!isAirtableConfigured());
 
-  useEffect(() => {
-    const loadMentors = async () => {
-      try {
-        setLoading(true);
-        if (isAirtableConfigured()) {
-          const data = await fetchMentors();
-          setMentors(data);
-        } else {
-          setError('Airtable API credentials not configured');
-        }
-      } catch (err) {
-        setError('Failed to load mentors. Please try again later.');
-        console.error('Error loading mentors:', err);
-      } finally {
-        setLoading(false);
+  const loadMentors = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      if (isAirtableConfigured()) {
+        const data = await fetchMentors();
+        setMentors(data);
+      } else {
+        setError('Airtable API credentials not configured');
       }
-    };
+    } catch (err) {
+      setError('Failed to load mentors. Please try again later.');
+      console.error('Error loading mentors:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     loadMentors();
   }, []);
 
@@ -53,7 +54,7 @@ const Index = () => {
               Connect with our exceptional mentors who are ready to guide you through your entrepreneurial journey.
             </p>
             
-            <div className="mt-4">
+            <div className="mt-4 flex justify-center gap-2">
               <Button 
                 onClick={() => setSettingsOpen(true)}
                 variant="outline"
@@ -61,6 +62,16 @@ const Index = () => {
               >
                 <Settings size={16} />
                 Airtable Settings
+              </Button>
+              
+              <Button 
+                onClick={loadMentors}
+                variant="outline"
+                className="flex items-center gap-2"
+                disabled={loading}
+              >
+                <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+                Refresh
               </Button>
             </div>
           </div>

@@ -25,20 +25,25 @@ export async function fetchMentors(): Promise<Mentor[]> {
   }
 
   try {
-    const response = await fetch(
-      `https://api.airtable.com/v0/${baseId}/${tableName}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    // The correct URL format for Airtable API is: https://api.airtable.com/v0/{baseId}/{tableName}
+    // No need for additional path segments
+    const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+    console.log('Fetching from Airtable URL:', url);
+    
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Airtable API error response:', errorText);
       throw new Error(`Failed to fetch mentors: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
+    console.log('Airtable data received:', data);
     
     return data.records.map((record: any) => ({
       id: record.id,
