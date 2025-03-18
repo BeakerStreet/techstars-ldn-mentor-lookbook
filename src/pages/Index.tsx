@@ -5,8 +5,9 @@ import MentorCard from '../components/MentorCard';
 import Navbar from '../components/Navbar';
 import AnimatedPageTransition from '../components/AnimatedPageTransition';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, X, Calendar } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
+import FloatingFilterBar from '../components/FloatingFilterBar';
 
 // Example mentor data - always shown regardless of Airtable status
 const exampleMentor: Mentor = {
@@ -27,7 +28,6 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [showAllTags, setShowAllTags] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const loadMentors = async () => {
@@ -171,8 +171,8 @@ const Index = () => {
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
         <Navbar />
         
-        <main className="max-w-7xl mx-auto px-6 md:px-12 pb-20">
-          <div className="text-center mb-16 mt-8">
+        <main className="max-w-7xl mx-auto px-6 md:px-12 pb-36">
+          <div className="text-center mb-12 mt-8">
             <div className="inline-block px-3 py-1 text-xs rounded-full bg-techstars-phosphor/10 text-techstars-phosphor font-medium mb-3 animate-fade-in">
               Meet Our Network
             </div>
@@ -196,78 +196,8 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Date Filter */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-medium text-gray-700">Filter by date</h2>
-              {selectedDate && (
-                <button
-                  onClick={() => setSelectedDate(null)}
-                  className="text-sm text-techstars-slate hover:text-techstars-phosphor flex items-center gap-1"
-                >
-                  <X size={14} />
-                  Clear date filter
-                </button>
-              )}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {availableDates.map((date) => (
-                <button
-                  key={date}
-                  onClick={() => setSelectedDate(date)}
-                  className={`px-4 py-2 text-sm rounded-lg transition-colors duration-200 ${
-                    selectedDate === date
-                      ? 'bg-techstars-phosphor text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {date}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Tag Filter Bar */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-medium text-gray-700">Filter by expertise & industries</h2>
-              <div className="flex items-center gap-4">
-                {selectedTags.length > 0 && (
-                  <button
-                    onClick={handleClearFilters}
-                    className="text-sm text-techstars-slate hover:text-techstars-phosphor flex items-center gap-1"
-                  >
-                    <X size={14} />
-                    Clear filters
-                  </button>
-                )}
-                {allTags.length > 8 && (
-                  <button
-                    onClick={() => setShowAllTags(!showAllTags)}
-                    className="text-sm text-techstars-phosphor hover:text-techstars-phosphor/80 flex items-center gap-1"
-                  >
-                    {showAllTags ? 'Show less' : 'See all'}
-                  </button>
-                )}
-              </div>
-            </div>
-            <div className={`flex flex-wrap gap-2 ${!showAllTags ? 'max-h-[4.5rem] overflow-hidden' : ''}`}>
-              {allTags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => handleTagToggle(tag)}
-                  className={`px-3 py-1 text-sm rounded-full transition-colors duration-200 ${
-                    selectedTags.includes(tag)
-                      ? 'bg-techstars-phosphor text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-          </div>
-
+          {/* Moved the filters to the FloatingFilterBar */}
+          
           {displayMentors()}
         </main>
         
@@ -276,6 +206,17 @@ const Index = () => {
             <p>© {new Date().getFullYear()} Techstars London. All rights reserved.</p>
           </div>
         </footer>
+
+        {/* Floating Filter Bar */}
+        <FloatingFilterBar
+          allTags={allTags}
+          selectedTags={selectedTags}
+          onTagToggle={handleTagToggle}
+          availableDates={availableDates}
+          selectedDate={selectedDate}
+          onDateSelect={setSelectedDate}
+          onClearFilters={handleClearFilters}
+        />
       </div>
     </AnimatedPageTransition>
   );
