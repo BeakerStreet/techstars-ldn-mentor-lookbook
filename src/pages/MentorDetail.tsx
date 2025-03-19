@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchMentorBySlug } from '../services/airtableService';
@@ -15,6 +16,9 @@ const placeholderImages = [
   "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&fit=crop", // deer
   "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=800&fit=crop", // kitten
 ];
+
+// Maximum length for role display in title
+const MAX_ROLE_LENGTH = 80;
 
 const MentorDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -58,6 +62,21 @@ const MentorDetail = () => {
     const nameSum = mentor.name.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
     const placeholderIndex = nameSum % placeholderImages.length;
     return placeholderImages[placeholderIndex];
+  }, [mentor]);
+
+  // Format role and company with character limit
+  const formattedRoleAndCompany = useMemo(() => {
+    if (!mentor || (!mentor.role && !mentor.company)) return '';
+    
+    const roleAndCompany = mentor.role && mentor.company 
+      ? `${mentor.role} at ${mentor.company}`
+      : mentor.role || mentor.company || '';
+    
+    if (roleAndCompany.length <= MAX_ROLE_LENGTH) {
+      return roleAndCompany;
+    }
+    
+    return `${roleAndCompany.substring(0, MAX_ROLE_LENGTH)}...`;
   }, [mentor]);
 
   const handleGenerateDescription = async () => {
@@ -154,10 +173,23 @@ const MentorDetail = () => {
                     Techstars Mentor
                   </div>
                   <h1 className="text-3xl md:text-4xl font-bold mb-2">{mentor.name}</h1>
-                  {mentor.role && mentor.company && (
-                    <p className="text-techstars-slate text-lg">
-                      {mentor.role} at {mentor.company}
-                    </p>
+                  {(mentor.role || mentor.company) && (
+                    <div>
+                      <p className="text-techstars-slate text-lg leading-relaxed">
+                        {formattedRoleAndCompany}
+                      </p>
+                      {mentor.role && mentor.role.length > MAX_ROLE_LENGTH && (
+                        <details className="mt-1">
+                          <summary className="text-xs text-techstars-slate cursor-pointer hover:text-techstars-phosphor">
+                            View full role details
+                          </summary>
+                          <p className="mt-2 text-sm text-techstars-slate bg-gray-50 p-3 rounded-md">
+                            {mentor.role}
+                            {mentor.company && ` at ${mentor.company}`}
+                          </p>
+                        </details>
+                      )}
+                    </div>
                   )}
                 </div>
                 

@@ -3,6 +3,12 @@ import { Link } from 'react-router-dom';
 import { Mentor } from '../types/mentor';
 import { Linkedin } from 'lucide-react';
 import { useMemo } from 'react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 interface MentorCardProps {
   mentor: Mentor;
@@ -16,6 +22,9 @@ const placeholderImages = [
   "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=600&fit=crop", // deer
   "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=600&fit=crop", // kitten
 ];
+
+// Maximum length for role and company display
+const MAX_ROLE_LENGTH = 60;
 
 const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
   // Staggered animation delay based on index
@@ -32,6 +41,32 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
     const placeholderIndex = nameSum % placeholderImages.length;
     return placeholderImages[placeholderIndex];
   }, [mentor.name, mentor.headshot]);
+
+  // Format role and company with character limit
+  const formattedRoleAndCompany = useMemo(() => {
+    if (!mentor.role && !mentor.company) return '';
+    
+    const roleAndCompany = mentor.role && mentor.company 
+      ? `${mentor.role} at ${mentor.company}`
+      : mentor.role || mentor.company || '';
+    
+    if (roleAndCompany.length <= MAX_ROLE_LENGTH) {
+      return roleAndCompany;
+    }
+    
+    return `${roleAndCompany.substring(0, MAX_ROLE_LENGTH)}...`;
+  }, [mentor.role, mentor.company]);
+
+  // Check if we need to show the full text in a tooltip
+  const needsTooltip = useMemo(() => {
+    if (!mentor.role && !mentor.company) return false;
+    
+    const roleAndCompany = mentor.role && mentor.company 
+      ? `${mentor.role} at ${mentor.company}`
+      : mentor.role || mentor.company || '';
+      
+    return roleAndCompany.length > MAX_ROLE_LENGTH;
+  }, [mentor.role, mentor.company]);
 
   return (
     <Link 
@@ -66,8 +101,21 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
           <div className="flex justify-between items-end">
             <div className="space-y-1">
               <h3 className="text-lg font-medium">{mentor.name}</h3>
-              {mentor.role && mentor.company && (
-                <p className="text-sm text-white/90">{mentor.role} at {mentor.company}</p>
+              {(mentor.role || mentor.company) && (
+                needsTooltip ? (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <p className="text-sm text-white/90 cursor-help">{formattedRoleAndCompany}</p>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="max-w-xs bg-black text-white border-gray-800">
+                        <p>{mentor.role && mentor.company ? `${mentor.role} at ${mentor.company}` : mentor.role || mentor.company}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ) : (
+                  <p className="text-sm text-white/90">{formattedRoleAndCompany}</p>
+                )
               )}
               <div className="flex flex-wrap gap-1 mt-2">
                 {mentor.date && (
