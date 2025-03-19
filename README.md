@@ -4,6 +4,10 @@
 
 **URL**: https://lovable.dev/projects/e23e4c0d-18b1-4137-8538-343695189b85
 
+## pm
+
+- [ ] add feedback feature
+
 ## How can I edit this code?
 
 There are several ways of editing your application.
