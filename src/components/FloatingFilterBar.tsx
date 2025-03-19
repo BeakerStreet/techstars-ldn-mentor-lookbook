@@ -69,7 +69,7 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
               <DrawerHeader>
                 <DrawerTitle>Filters</DrawerTitle>
                 <DrawerDescription>
-                  Filter mentors by expertise, industry or date
+                  Filter mentors by date or tag
                 </DrawerDescription>
               </DrawerHeader>
               
@@ -107,7 +107,7 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
               {/* Tags Filter */}
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-medium text-gray-700">Filter by expertise & industries</h2>
+                  <h2 className="text-sm font-medium text-gray-700">Filter by tag</h2>
                   {allTags.length > 8 && (
                     <button
                       onClick={() => setShowAllTags(!showAllTags)}
@@ -160,7 +160,7 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
           </DrawerTrigger>
           <DrawerContent>
             <DrawerHeader>
-              <DrawerTitle>Select date</DrawerTitle>
+              <DrawerTitle>Filter by date</DrawerTitle>
               <DrawerDescription>
                 Filter mentors by their available dates
               </DrawerDescription>
@@ -196,7 +196,7 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
           <DrawerTrigger asChild>
             <Button variant="outline" size="sm" className="rounded-full">
               <Filter size={16} className="mr-2" />
-              Expertise & Industry
+              Filter by tag
               {selectedTags.length > 0 && (
                 <span className="ml-2 bg-techstars-phosphor text-white w-5 h-5 rounded-full text-xs flex items-center justify-center">
                   {selectedTags.length}
@@ -206,9 +206,9 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
           </DrawerTrigger>
           <DrawerContent>
             <DrawerHeader>
-              <DrawerTitle>Filter by expertise & industries</DrawerTitle>
+              <DrawerTitle>Filter by tag</DrawerTitle>
               <DrawerDescription>
-                Select one or more areas to filter mentors
+                Select one or more tags to filter mentors
               </DrawerDescription>
             </DrawerHeader>
             <div className="p-4">
