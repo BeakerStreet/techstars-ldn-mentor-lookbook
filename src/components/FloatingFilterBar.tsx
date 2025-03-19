@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Calendar, Filter, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -155,7 +154,7 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
           <DrawerTrigger asChild>
             <Button variant="outline" size="sm" className="rounded-full">
               <Calendar size={16} className="mr-2" />
-              {selectedDate ? selectedDate : 'Select date'}
+              {selectedDate ? selectedDate : 'Filter by date'}
             </Button>
           </DrawerTrigger>
           <DrawerContent>
