@@ -1,4 +1,3 @@
-
 import { Mentor } from '../types/mentor';
 
 // Get configuration from environment variables
@@ -100,4 +99,102 @@ function createSlug(name: string): string {
     .toLowerCase()
     .replace(/[^\w\s]/gi, '')
     .replace(/\s+/g, '-');
+}
+
+export async function submitMentorFeedback(
+  mentorId: string,
+  company: string,
+  feedbackType: 'thumbsUp' | 'thumbsNeutral'
+): Promise<boolean> {
+  const { token, baseId, tableName } = getAirtableConfig();
+  
+  if (!token || !baseId) {
+    throw new AirtableError('Airtable API credentials not configured in environment variables');
+  }
+
+  try {
+    // Clean up the tableName in case it contains any slashes or extra path segments
+    const cleanTableName = tableName.split('/')[0].split('?')[0].trim();
+    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}/${mentorId}`;
+    
+    // Get current record data
+    const getResponse = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!getResponse.ok) {
+      const errorText = await getResponse.text();
+      let errorDetails;
+      try {
+        errorDetails = JSON.parse(errorText);
+      } catch {
+        errorDetails = errorText;
+      }
+      
+      throw new AirtableError(
+        `Failed to fetch mentor record: ${getResponse.status} ${getResponse.statusText}`,
+        getResponse.status,
+        errorDetails
+      );
+    }
+
+    const record = await getResponse.json();
+    console.log('Retrieved Airtable record:', record);
+    
+    // Match the exact field names as in Airtable
+    // "Renn thumbs up", "Renn thumbs neutral", etc.
+    const fieldName = `${company} thumbs ${feedbackType === 'thumbsUp' ? 'up' : 'neutral'}`;
+    console.log('Using field name:', fieldName);
+    
+    // Get current value to toggle it
+    const currentValue = record.fields[fieldName] === true;
+    const newValue = !currentValue; // Toggle between true and false
+    
+    console.log(`Toggling field ${fieldName} from ${currentValue} to ${newValue}`);
+    
+    // Update the record with the toggled value
+    const updateResponse = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        fields: {
+          [fieldName]: newValue
+        }
+      })
+    });
+
+    if (!updateResponse.ok) {
+      const errorText = await updateResponse.text();
+      let errorDetails;
+      try {
+        errorDetails = JSON.parse(errorText);
+      } catch {
+        errorDetails = errorText;
+      }
+      
+      console.error('Airtable update error details:', errorDetails);
+      
+      throw new AirtableError(
+        `Failed to update mentor record: ${updateResponse.status} ${updateResponse.statusText}`,
+        updateResponse.status,
+        errorDetails
+      );
+    }
+
+    const updateData = await updateResponse.json();
+    console.log('Update successful:', updateData);
+    
+    return newValue; // Return the new value so the component knows if it's checked or unchecked
+  } catch (error) {
+    console.error('Error in submitMentorFeedback:', error);
+    if (error instanceof AirtableError) {
+      throw error;
+    }
+    throw new AirtableError('Failed to submit mentor feedback: Network error or invalid response');
+  }
 }

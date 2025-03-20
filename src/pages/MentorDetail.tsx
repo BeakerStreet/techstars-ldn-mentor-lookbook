@@ -4,6 +4,7 @@ import { fetchMentorBySlug } from '../services/airtableService';
 import { Mentor } from '../types/mentor';
 import Navbar from '../components/Navbar';
 import AnimatedPageTransition from '../components/AnimatedPageTransition';
+import MentorFeedback from '../components/MentorFeedback';
 import { ArrowLeft, Linkedin, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -186,6 +187,11 @@ const MentorDetail = () => {
                     </div>
                   </div>
                 )}
+                
+                <div className="mt-8">
+                  <h2 className="text-xl font-semibold mb-3">Feedback</h2>
+                  <MentorFeedback mentorId={mentor.id} mentorName={mentor.name} />
+                </div>
               </div>
             </div>
           ) : (
