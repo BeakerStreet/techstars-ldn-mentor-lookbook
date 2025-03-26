@@ -83,9 +83,65 @@ export async function fetchMentors(): Promise<Mentor[]> {
 }
 
 export async function fetchMentorBySlug(slug: string): Promise<Mentor | null> {
+  const { token, baseId, tableName } = getAirtableConfig();
+  
+  if (!token || !baseId) {
+    throw new AirtableError('Airtable API credentials not configured in environment variables');
+  }
+
   try {
-    const mentors = await fetchMentors();
-    return mentors.find(mentor => mentor.slug === slug) || null;
+    // Clean up the tableName in case it contains any slashes or extra path segments
+    const cleanTableName = tableName.split('/')[0].split('?')[0].trim();
+    
+    // Search for mentor in both statuses
+    const filterByFormula = encodeURIComponent(
+      `AND(OR(Status='Booked - March 2025', Status='Removed - March 2025'), Name='${slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}')`
+    );
+    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}?filterByFormula=${filterByFormula}`;
+    
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorDetails;
+      try {
+        errorDetails = JSON.parse(errorText);
+      } catch {
+        errorDetails = errorText;
+      }
+      
+      throw new AirtableError(
+        `Failed to fetch mentor: ${response.status} ${response.statusText}`,
+        response.status,
+        errorDetails
+      );
+    }
+
+    const data = await response.json();
+    
+    if (data.records.length === 0) {
+      return null;
+    }
+
+    const record = data.records[0];
+    return {
+      id: record.id,
+      name: record.fields.Name || 'Unknown',
+      headshot: record.fields.Headshot?.[0]?.url || '/placeholder.svg',
+      linkedinUrl: record.fields.LinkedIn || '#',
+      role: record.fields.Role || '',
+      company: record.fields.Company || '',
+      bio: record.fields.Bio || '',
+      expertise: record.fields.Expertise || [],
+      email: record.fields.Email || '',
+      slug: createSlug(record.fields.Name || 'mentor'),
+      industries: record.fields['Industries of Interest'] || [],
+      date: record.fields.Date || ''
+    };
   } catch (error) {
     if (error instanceof AirtableError) {
       throw error;
@@ -196,5 +252,66 @@ export async function submitMentorFeedback(
       throw error;
     }
     throw new AirtableError('Failed to submit mentor feedback: Network error or invalid response');
+  }
+}
+
+export async function fetchAdditionalMentors(): Promise<Mentor[]> {
+  const { token, baseId, tableName } = getAirtableConfig();
+  
+  if (!token || !baseId) {
+    throw new AirtableError('Airtable API credentials not configured in environment variables');
+  }
+
+  try {
+    // Clean up the tableName in case it contains any slashes or extra path segments
+    const cleanTableName = tableName.split('/')[0].split('?')[0].trim();
+    
+    // Add filter for Status field
+    const filterByFormula = encodeURIComponent("Status='Removed - March 2025'");
+    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}?filterByFormula=${filterByFormula}`;
+    
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorDetails;
+      try {
+        errorDetails = JSON.parse(errorText);
+      } catch {
+        errorDetails = errorText;
+      }
+      
+      throw new AirtableError(
+        `Failed to fetch additional mentors: ${response.status} ${response.statusText}`,
+        response.status,
+        errorDetails
+      );
+    }
+
+    const data = await response.json();
+    
+    return data.records.map((record: any) => ({
+      id: record.id,
+      name: record.fields.Name || 'Unknown',
+      headshot: record.fields.Headshot?.[0]?.url || '/placeholder.svg',
+      linkedinUrl: record.fields.LinkedIn || '#',
+      role: record.fields.Role || '',
+      company: record.fields.Company || '',
+      bio: record.fields.Bio || '',
+      expertise: record.fields.Expertise || [],
+      email: record.fields.Email || '',
+      slug: createSlug(record.fields.Name || 'mentor'),
+      industries: record.fields['Industries of Interest'] || [],
+      date: record.fields.Date || ''
+    }));
+  } catch (error) {
+    if (error instanceof AirtableError) {
+      throw error;
+    }
+    throw new AirtableError('Failed to fetch additional mentors: Network error or invalid response');
   }
 }
