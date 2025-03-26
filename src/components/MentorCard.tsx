@@ -185,7 +185,7 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
                     <TooltipTrigger asChild>
                       <a 
                         href={`mailto:${mentor.email}`}
-                        className="p-1.5 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-colors duration-200"
+                        className="p-1.5 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-colors duration-200 flex items-center justify-center w-[32px] h-[32px]"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Mail size={16} className="text-white" />
@@ -206,7 +206,7 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
                         e.stopPropagation();
                         window.location.href = `mailto:georgie@techstars.com?subject=Request%20Intro%20-%20${mentor.name}&body=Hi%20Georgie%2C%0A%0AI%20would%20like%20to%20request%20an%20introduction%20to%20${mentor.name}.%0A%0AThanks!`;
                       }}
-                      className="p-1.5 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-colors duration-200"
+                      className="p-1.5 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-colors duration-200 flex items-center justify-center w-[32px] h-[32px]"
                     >
                       <span className="text-white text-xs font-medium">RI</span>
                     </button>

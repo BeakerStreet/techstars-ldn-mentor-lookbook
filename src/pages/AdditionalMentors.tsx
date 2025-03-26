@@ -45,9 +45,9 @@ const AdditionalMentors = () => {
           allTags={allTags}
           selectedTags={selectedTags}
           onTagToggle={handleTagToggle}
-          availableDates={availableDates}
-          selectedDate={selectedDate}
-          onDateSelect={setSelectedDate}
+          availableDates={[]}
+          selectedDate={null}
+          onDateSelect={() => {}}
           onClearFilters={handleClearFilters}
         />
       </div>

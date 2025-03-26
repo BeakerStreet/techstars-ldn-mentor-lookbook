@@ -150,45 +150,47 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 w-auto max-w-3xl">
       <div className="bg-white rounded-full shadow-lg px-6 py-3 flex items-center gap-4 border border-gray-100">
         {/* Date Filter Button */}
-        <Drawer>
-          <DrawerTrigger asChild>
-            <Button variant="outline" size="sm" className="rounded-full">
-              <Calendar size={16} className="mr-2" />
-              {selectedDate ? selectedDate : 'Filter by date'}
-            </Button>
-          </DrawerTrigger>
-          <DrawerContent>
-            <DrawerHeader>
-              <DrawerTitle>Filter by date</DrawerTitle>
-              <DrawerDescription>
-                Filter mentors by their available dates
-              </DrawerDescription>
-            </DrawerHeader>
-            <div className="px-4 py-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {availableDates.map((date) => (
-                <button
-                  key={date}
-                  onClick={() => onDateSelect(date)}
-                  className={`px-4 py-2 text-sm rounded-lg transition-colors duration-200 ${
-                    selectedDate === date
-                      ? 'bg-techstars-phosphor text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {date}
-                </button>
-              ))}
-            </div>
-            <DrawerFooter>
-              <Button variant="outline" onClick={() => onDateSelect(null)}>
-                Clear date
+        {availableDates.length > 0 && (
+          <Drawer>
+            <DrawerTrigger asChild>
+              <Button variant="outline" size="sm" className="rounded-full">
+                <Calendar size={16} className="mr-2" />
+                {selectedDate ? selectedDate : 'Filter by date'}
               </Button>
-              <DrawerClose asChild>
-                <Button>Done</Button>
-              </DrawerClose>
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
+            </DrawerTrigger>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>Filter by date</DrawerTitle>
+                <DrawerDescription>
+                  Filter mentors by their available dates
+                </DrawerDescription>
+              </DrawerHeader>
+              <div className="px-4 py-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {availableDates.map((date) => (
+                  <button
+                    key={date}
+                    onClick={() => onDateSelect(date)}
+                    className={`px-4 py-2 text-sm rounded-lg transition-colors duration-200 ${
+                      selectedDate === date
+                        ? 'bg-techstars-phosphor text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {date}
+                  </button>
+                ))}
+              </div>
+              <DrawerFooter>
+                <Button variant="outline" onClick={() => onDateSelect(null)}>
+                  Clear date
+                </Button>
+                <DrawerClose asChild>
+                  <Button>Done</Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
+        )}
 
         {/* Tags Filter Button */}
         <Drawer>
