@@ -8,6 +8,7 @@ export interface Mentor {
   bio?: string;
   expertise?: string[];
   email?: string;
+  phoneNumber?: string;
   slug: string;
   industries?: string[];
   date?: string;

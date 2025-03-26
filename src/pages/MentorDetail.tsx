@@ -5,7 +5,7 @@ import { Mentor } from '../types/mentor';
 import Navbar from '../components/Navbar';
 import AnimatedPageTransition from '../components/AnimatedPageTransition';
 import MentorFeedback from '../components/MentorFeedback';
-import { ArrowLeft, Linkedin, Mail } from 'lucide-react';
+import { ArrowLeft, Linkedin, Mail, Phone } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Fun placeholder images for mentors without headshots
@@ -113,6 +113,14 @@ const MentorDetail = () => {
                 </div>
                 
                 <div className="flex flex-col space-y-4">
+                  {mentor.phoneNumber && (
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-white shadow-sm">
+                      <div className="p-2 bg-techstars-phosphor/10 rounded-md text-techstars-phosphor">
+                        <Phone size={20} />
+                      </div>
+                      <span>{mentor.phoneNumber}</span>
+                    </div>
+                  )}
                   <a 
                     href={mentor.linkedinUrl} 
                     target="_blank" 

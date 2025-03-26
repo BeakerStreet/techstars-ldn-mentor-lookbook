@@ -8,9 +8,9 @@
 
 - [x] rm feedback buttons from addl mentors
 - [x] add "request connection" button -- drafts email to Georgie + Eoghan
-- [ ] swap to simpler tags: "investor" / "operator" for now
-- [ ] swap "Send Email" to "Cold Email"
-- [ ] add whatsapp to addl mentors
+- [x] swap to simpler tags: "investor" / "operator" for now
+- [x] swap "Send Email" to "Cold Email"
+- [x] add whatsapp to addl mentors
 - [ ] [STRETCH] add "georgie description" paragraph
 
 ## How can I edit this code?
