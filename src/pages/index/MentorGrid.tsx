@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { Mentor } from '../../types/mentor';
 import MentorCard from '../../components/MentorCard';

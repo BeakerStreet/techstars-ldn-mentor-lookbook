@@ -6,7 +6,12 @@
 
 ## pm
 
-- [ ] add 
+- [ ] rm feedback buttons from addl mentors
+- [ ] add "request connection" button -- drafts email to Georgie + Eoghan
+- [ ] swap to simpler tags: "investor" / "operator" for now
+- [ ] swap "Send Email" to "Cold Email"
+- [ ] add whatsapp to addl mentors
+- [ ] [STRETCH] add "georgie description" paragraph
 
 ## How can I edit this code?
 

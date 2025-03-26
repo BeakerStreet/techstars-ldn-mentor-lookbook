@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { fetchAdditionalMentors, isAirtableConfigured } from '../../../services/airtableService';
+import { fetchAdditionalMentors, isAirtableConfigured, listTables } from '../../../services/airtableService';
 import { Mentor } from '../../../types/mentor';
 import { toast } from 'sonner';
 
@@ -16,15 +16,20 @@ export const useAdditionalMentorsData = () => {
       setError(null);
       
       if (isAirtableConfigured()) {
+        console.log('Checking Airtable configuration...');
+        await listTables(); // List tables first to verify API access
+        console.log('Fetching additional mentors...');
         const data = await fetchAdditionalMentors();
         setMentors(data);
       } else {
-        setError('Airtable API credentials not configured in environment variables');
-        toast.error('Missing Airtable API credentials in environment variables');
+        const error = 'Airtable API credentials not configured in environment variables';
+        console.error(error);
+        setError(error);
+        toast.error(error);
       }
     } catch (err) {
-      setError('Failed to load additional mentors. Please check your environment variables and try again.');
       console.error('Error loading additional mentors:', err);
+      setError('Failed to load additional mentors. Please check your environment variables and try again.');
       toast.error('Failed to load additional mentors. Please check your environment variables.');
     } finally {
       setLoading(false);

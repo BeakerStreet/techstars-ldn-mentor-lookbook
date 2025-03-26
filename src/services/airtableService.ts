@@ -32,18 +32,26 @@ export async function fetchMentors(): Promise<Mentor[]> {
     // Clean up the tableName in case it contains any slashes or extra path segments
     const cleanTableName = tableName.split('/')[0].split('?')[0].trim();
     
-    // Add filter for Status field
-    const filterByFormula = encodeURIComponent("Status='Booked - March 2025'");
-    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}?filterByFormula=${filterByFormula}`;
+    // Add filter for lookbookLabel field
+    const filterByFormula = encodeURIComponent("lookbookLabel='MM'");
+    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}?filterByFormula=${filterByFormula}&_=${Date.now()}`;
     
     const response = await fetch(url, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`
       },
     });
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('Airtable API Error Details:', {
+        status: response.status,
+        statusText: response.statusText,
+        url,
+        headers: Object.fromEntries(response.headers.entries()),
+        errorText
+      });
+      
       let errorDetails;
       try {
         errorDetails = JSON.parse(errorText);
@@ -93,20 +101,28 @@ export async function fetchMentorBySlug(slug: string): Promise<Mentor | null> {
     // Clean up the tableName in case it contains any slashes or extra path segments
     const cleanTableName = tableName.split('/')[0].split('?')[0].trim();
     
-    // Search for mentor in both statuses
+    // Search for mentor in both labels
     const filterByFormula = encodeURIComponent(
-      `AND(OR(Status='Booked - March 2025', Status='Removed - March 2025'), Name='${slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}')`
+      `AND(OR(lookbookLabel='MM', lookbookLabel='AM'), Name='${slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}')`
     );
-    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}?filterByFormula=${filterByFormula}`;
+    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}?filterByFormula=${filterByFormula}&_=${Date.now()}`;
     
     const response = await fetch(url, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`
       },
     });
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('Airtable API Error Details:', {
+        status: response.status,
+        statusText: response.statusText,
+        url,
+        headers: Object.fromEntries(response.headers.entries()),
+        errorText
+      });
+      
       let errorDetails;
       try {
         errorDetails = JSON.parse(errorText);
@@ -182,6 +198,14 @@ export async function submitMentorFeedback(
 
     if (!getResponse.ok) {
       const errorText = await getResponse.text();
+      console.error('Airtable API Error Details:', {
+        status: getResponse.status,
+        statusText: getResponse.statusText,
+        url,
+        headers: Object.fromEntries(getResponse.headers.entries()),
+        errorText
+      });
+      
       let errorDetails;
       try {
         errorDetails = JSON.parse(errorText);
@@ -226,19 +250,12 @@ export async function submitMentorFeedback(
 
     if (!updateResponse.ok) {
       const errorText = await updateResponse.text();
-      let errorDetails;
-      try {
-        errorDetails = JSON.parse(errorText);
-      } catch {
-        errorDetails = errorText;
-      }
-      
-      console.error('Airtable update error details:', errorDetails);
+      console.error('Airtable update error details:', errorText);
       
       throw new AirtableError(
         `Failed to update mentor record: ${updateResponse.status} ${updateResponse.statusText}`,
         updateResponse.status,
-        errorDetails
+        errorText
       );
     }
 
@@ -266,18 +283,33 @@ export async function fetchAdditionalMentors(): Promise<Mentor[]> {
     // Clean up the tableName in case it contains any slashes or extra path segments
     const cleanTableName = tableName.split('/')[0].split('?')[0].trim();
     
-    // Add filter for Status field
-    const filterByFormula = encodeURIComponent("Status='Removed - March 2025'");
-    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}?filterByFormula=${filterByFormula}`;
+    // Add filter for lookbookLabel field
+    const filterByFormula = encodeURIComponent("lookbookLabel='AM'");
+    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}?filterByFormula=${filterByFormula}&_=${Date.now()}`;
+    
+    console.log('Airtable API Request:', {
+      url,
+      baseId,
+      tableName: cleanTableName,
+      filterByFormula
+    });
     
     const response = await fetch(url, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`
       },
     });
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('Airtable API Error Details:', {
+        status: response.status,
+        statusText: response.statusText,
+        url,
+        headers: Object.fromEntries(response.headers.entries()),
+        errorText
+      });
+      
       let errorDetails;
       try {
         errorDetails = JSON.parse(errorText);
@@ -313,5 +345,99 @@ export async function fetchAdditionalMentors(): Promise<Mentor[]> {
       throw error;
     }
     throw new AirtableError('Failed to fetch additional mentors: Network error or invalid response');
+  }
+}
+
+export async function listTables(): Promise<void> {
+  const { token, baseId } = getAirtableConfig();
+  
+  if (!token || !baseId) {
+    console.error('Missing Airtable configuration:', { token: !!token, baseId: !!baseId });
+    throw new AirtableError('Airtable API credentials not configured in environment variables');
+  }
+
+  try {
+    const url = `https://api.airtable.com/v0/${baseId}/tables`;
+    console.log('Attempting to fetch tables with:', {
+      url,
+      baseId,
+      tokenPrefix: token.substring(0, 10) + '...'
+    });
+    
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Failed to list tables:', {
+        status: response.status,
+        statusText: response.statusText,
+        url,
+        headers: Object.fromEntries(response.headers.entries()),
+        errorText
+      });
+      return;
+    }
+
+    const data = await response.json();
+    console.log('Successfully fetched tables:', {
+      count: data.tables?.length || 0,
+      tableNames: data.tables?.map((table: any) => table.name) || []
+    });
+  } catch (error) {
+    console.error('Error listing tables:', error);
+  }
+}
+
+export async function testAirtableAccess(): Promise<void> {
+  const { token, baseId } = getAirtableConfig();
+  
+  if (!token || !baseId) {
+    console.error('Missing Airtable configuration:', { 
+      hasToken: !!token, 
+      hasBaseId: !!baseId,
+      tokenPrefix: token ? token.substring(0, 10) + '...' : 'none',
+      baseId: baseId || 'none'
+    });
+    throw new AirtableError('Airtable API credentials not configured in environment variables');
+  }
+
+  try {
+    // First try to get base info
+    const baseUrl = `https://api.airtable.com/v0/${baseId}`;
+    console.log('Testing Airtable access with:', {
+      baseUrl,
+      tokenPrefix: token.substring(0, 10) + '...'
+    });
+    
+    const response = await fetch(baseUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Airtable API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        url: baseUrl,
+        headers: Object.fromEntries(response.headers.entries()),
+        errorText
+      });
+      throw new AirtableError(`Failed to access Airtable base: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('Successfully accessed Airtable base:', {
+      name: data.name,
+      tables: data.tables?.map((t: any) => t.name) || []
+    });
+  } catch (error) {
+    console.error('Error testing Airtable access:', error);
+    throw error;
   }
 }
