@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Mentor } from '../types/mentor';
 import { Linkedin } from 'lucide-react';
@@ -123,25 +122,11 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
                     {mentor.date}
                   </span>
                 )}
-                {mentor.expertise?.slice(0, 1).map((skill, index) => (
+                {mentor.lookbookTag && (
                   <span 
-                    key={`expertise-${index}`}
                     className="text-xs px-2 py-0.5 bg-white/20 rounded-full"
                   >
-                    {skill}
-                  </span>
-                ))}
-                {mentor.industries?.slice(0, 1).map((industry, index) => (
-                  <span 
-                    key={`industry-${index}`}
-                    className="text-xs px-2 py-0.5 bg-white/20 rounded-full"
-                  >
-                    {industry}
-                  </span>
-                ))}
-                {(mentor.expertise?.length > 1 || mentor.industries?.length > 1) && (
-                  <span className="text-xs px-2 py-0.5 bg-white/20 rounded-full">
-                    +{(mentor.expertise?.length || 0) + (mentor.industries?.length || 0) - 2} more
+                    {mentor.lookbookTag}
                   </span>
                 )}
               </div>

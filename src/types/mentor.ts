@@ -12,4 +12,5 @@ export interface Mentor {
   industries?: string[];
   date?: string;
   lookbookLabel?: string;
+  lookbookTag?: 'Investor' | 'Operator';
 }

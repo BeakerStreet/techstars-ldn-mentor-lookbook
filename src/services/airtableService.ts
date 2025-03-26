@@ -80,7 +80,9 @@ export async function fetchMentors(): Promise<Mentor[]> {
       email: record.fields.Email || '',
       slug: createSlug(record.fields.Name || 'mentor'),
       industries: record.fields['Industries of Interest'] || [],
-      date: record.fields.Date || ''
+      date: record.fields.Date || '',
+      lookbookLabel: record.fields.lookbookLabel || '',
+      lookbookTag: record.fields.lookbookTag || ''
     }));
   } catch (error) {
     if (error instanceof AirtableError) {
@@ -157,7 +159,8 @@ export async function fetchMentorBySlug(slug: string): Promise<Mentor | null> {
       slug: createSlug(record.fields.Name || 'mentor'),
       industries: record.fields['Industries of Interest'] || [],
       date: record.fields.Date || '',
-      lookbookLabel: record.fields.lookbookLabel || ''
+      lookbookLabel: record.fields.lookbookLabel || '',
+      lookbookTag: record.fields.lookbookTag || ''
     };
   } catch (error) {
     if (error instanceof AirtableError) {
@@ -339,7 +342,9 @@ export async function fetchAdditionalMentors(): Promise<Mentor[]> {
       email: record.fields.Email || '',
       slug: createSlug(record.fields.Name || 'mentor'),
       industries: record.fields['Industries of Interest'] || [],
-      date: record.fields.Date || ''
+      date: record.fields.Date || '',
+      lookbookLabel: record.fields.lookbookLabel || '',
+      lookbookTag: record.fields.lookbookTag || ''
     }));
   } catch (error) {
     if (error instanceof AirtableError) {
