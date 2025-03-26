@@ -133,7 +133,26 @@ const MentorDetail = () => {
                       <div className="p-2 bg-techstars-phosphor/10 rounded-md text-techstars-phosphor">
                         <Mail size={20} />
                       </div>
-                      <span>Send Email</span>
+                      <span>Email Directly</span>
+                    </a>
+                  )}
+
+                  {mentor.lookbookLabel === 'AM' && (
+                    <a 
+                      href={`mailto:georgie.smithwick@techstars.com,eoghan.oflaherty@techstars.com?subject=${encodeURIComponent(`Introduction to ${mentor.name} for a Techstars founder`)}&body=${encodeURIComponent(`Hi Georgie and Eoghan,
+
+I hope this email finds you well. I'm writing to request an introduction to ${mentor.name}${mentor.role ? ` (${mentor.role}${mentor.company ? ` at ${mentor.company}` : ''})` : ''}.
+
+Thank you for your help!
+
+Best regards,
+[Your name]`)}`}
+                      className="flex items-center gap-3 p-3 rounded-lg bg-white shadow-sm hover:shadow transition-shadow duration-300"
+                    >
+                      <div className="p-2 bg-green-500/10 rounded-md text-green-600">
+                        <Mail size={20} />
+                      </div>
+                      <span>Request Introduction</span>
                     </a>
                   )}
                 </div>
