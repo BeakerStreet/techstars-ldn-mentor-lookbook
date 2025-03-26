@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Mentor } from '../types/mentor';
-import { Linkedin } from 'lucide-react';
+import { Linkedin, Mail } from 'lucide-react';
 import { useMemo } from 'react';
 import {
   Tooltip,
@@ -98,7 +98,7 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
         
         <div className="p-4 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent text-white">
           <div className="flex justify-between items-end">
-            <div className="space-y-1">
+            <div className="space-y-1 pr-16">
               <h3 className="text-lg font-medium">{mentor.name}</h3>
               {(mentor.role || mentor.company) && (
                 needsTooltip ? (
@@ -132,35 +132,90 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
               </div>
             </div>
             
-            <div className="flex gap-2">
-              <a 
-                href={mentor.linkedinUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="p-2 bg-white/20 hover:bg-techstars-phosphor hover:text-white rounded-full transition-colors duration-300"
-                aria-label={`View ${mentor.name}'s LinkedIn profile`}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Linkedin size={16} />
-              </a>
-              
-              <div className="p-2 bg-white/20 hover:bg-white hover:text-black rounded-full transition-colors duration-300">
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="16" 
-                  height="16" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  className="lucide lucide-arrow-right"
-                >
-                  <path d="M5 12h14" />
-                  <path d="m12 5 7 7-7 7" />
-                </svg>
-              </div>
+            <div className="absolute bottom-4 right-4 grid grid-cols-2 gap-1">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a 
+                      href={mentor.linkedinUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-1.5 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-colors duration-200"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Linkedin size={16} className="text-white" />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="bg-black text-white border-gray-800">
+                    <p>View LinkedIn Profile</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="p-1.5 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-colors duration-200">
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="16" 
+                        height="16" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        className="text-white"
+                      >
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                      </svg>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="bg-black text-white border-gray-800">
+                    <p>View Full Profile</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {mentor.email && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a 
+                        href={`mailto:${mentor.email}`}
+                        className="p-1.5 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-colors duration-200"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Mail size={16} className="text-white" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent side="left" className="bg-black text-white border-gray-800">
+                      <p>Email Directly</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `mailto:georgie@techstars.com?subject=Request%20Intro%20-%20${mentor.name}&body=Hi%20Georgie%2C%0A%0AI%20would%20like%20to%20request%20an%20introduction%20to%20${mentor.name}.%0A%0AThanks!`;
+                      }}
+                      className="p-1.5 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-colors duration-200"
+                    >
+                      <span className="text-white text-xs font-medium">RI</span>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="bg-black text-white border-gray-800">
+                    <p>Request Introduction</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
         </div>
