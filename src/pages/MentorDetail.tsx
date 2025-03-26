@@ -188,10 +188,12 @@ const MentorDetail = () => {
                   </div>
                 )}
                 
-                <div className="mt-8">
-                  <h2 className="text-xl font-semibold mb-3">Feedback</h2>
-                  <MentorFeedback mentorId={mentor.id} mentorName={mentor.name} />
-                </div>
+                {mentor.lookbookLabel === 'MM' && (
+                  <div className="mt-8">
+                    <h2 className="text-xl font-semibold mb-3">Feedback</h2>
+                    <MentorFeedback mentorId={mentor.id} mentorName={mentor.name} />
+                  </div>
+                )}
               </div>
             </div>
           ) : (

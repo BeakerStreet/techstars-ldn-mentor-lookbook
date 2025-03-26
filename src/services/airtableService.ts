@@ -156,7 +156,8 @@ export async function fetchMentorBySlug(slug: string): Promise<Mentor | null> {
       email: record.fields.Email || '',
       slug: createSlug(record.fields.Name || 'mentor'),
       industries: record.fields['Industries of Interest'] || [],
-      date: record.fields.Date || ''
+      date: record.fields.Date || '',
+      lookbookLabel: record.fields.lookbookLabel || ''
     };
   } catch (error) {
     if (error instanceof AirtableError) {

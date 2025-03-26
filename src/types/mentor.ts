@@ -11,4 +11,5 @@ export interface Mentor {
   slug: string;
   industries?: string[];
   date?: string;
+  lookbookLabel?: string;
 }
