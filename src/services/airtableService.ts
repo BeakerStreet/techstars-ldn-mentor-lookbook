@@ -68,23 +68,45 @@ export async function fetchMentors(): Promise<Mentor[]> {
 
     const data = await response.json();
     
-    return data.records.map((record: any) => ({
-      id: record.id,
-      name: record.fields.Name || 'Unknown',
-      headshot: record.fields.Headshot?.[0]?.url || '/placeholder.svg',
-      linkedinUrl: record.fields.LinkedIn || '#',
-      role: record.fields.Role || '',
-      company: record.fields.Company || '',
-      bio: record.fields.Bio || '',
-      expertise: record.fields.Expertise || [],
-      email: record.fields.Email || '',
-      phoneNumber: record.fields.phoneNumber || '',
-      slug: createSlug(record.fields.Name || 'mentor'),
-      industries: record.fields['Industries of Interest'] || [],
-      date: record.fields.Date || '',
-      lookbookLabel: record.fields.lookbookLabel || '',
-      lookbookTag: record.fields.lookbookTag || ''
-    }));
+    // Log the raw lookbookTag values from Airtable with more detail
+    console.log('Raw lookbookTag values from Airtable:', 
+      data.records.map((record: any) => ({
+        name: record.fields.Name,
+        lookbookTag: record.fields.lookbookTag,
+        rawFields: record.fields // Log all fields to see what we're getting
+      }))
+    );
+    
+    return data.records.map((record: any) => {
+      // Log the exact value we're checking
+      console.log(`Processing mentor ${record.fields.Name}:`, {
+        rawLookbookTag: record.fields.lookbookTag,
+        isInvestor: record.fields.lookbookTag === 'Investor',
+        isOperator: record.fields.lookbookTag === 'Operator'
+      });
+
+      const mentor = {
+        id: record.id,
+        name: record.fields.Name || 'Unknown',
+        headshot: record.fields.Headshot?.[0]?.url || '/placeholder.svg',
+        linkedinUrl: record.fields.LinkedIn || '#',
+        role: record.fields.Role || '',
+        company: record.fields.Company || '',
+        bio: record.fields.Bio || '',
+        expertise: record.fields.Expertise || [],
+        email: record.fields.Email || '',
+        phoneNumber: record.fields.phoneNumber || '',
+        slug: createSlug(record.fields.Name || 'mentor'),
+        industries: record.fields['Industries of Interest'] || [],
+        date: record.fields.Date || '',
+        lookbookLabel: record.fields.lookbookLabel || '',
+        lookbookTag: Array.isArray(record.fields.lookbookTag) ? 
+          record.fields.lookbookTag.filter((tag: string) => tag === 'Investor' || tag === 'Operator') : 
+          undefined
+      };
+      
+      return mentor;
+    });
   } catch (error) {
     if (error instanceof AirtableError) {
       throw error;
@@ -162,7 +184,9 @@ export async function fetchMentorBySlug(slug: string): Promise<Mentor | null> {
       industries: record.fields['Industries of Interest'] || [],
       date: record.fields.Date || '',
       lookbookLabel: record.fields.lookbookLabel || '',
-      lookbookTag: record.fields.lookbookTag || ''
+      lookbookTag: Array.isArray(record.fields.lookbookTag) ? 
+        record.fields.lookbookTag.filter((tag: string) => tag === 'Investor' || tag === 'Operator') : 
+        undefined
     };
   } catch (error) {
     if (error instanceof AirtableError) {
@@ -332,23 +356,45 @@ export async function fetchAdditionalMentors(): Promise<Mentor[]> {
 
     const data = await response.json();
     
-    return data.records.map((record: any) => ({
-      id: record.id,
-      name: record.fields.Name || 'Unknown',
-      headshot: record.fields.Headshot?.[0]?.url || '/placeholder.svg',
-      linkedinUrl: record.fields.LinkedIn || '#',
-      role: record.fields.Role || '',
-      company: record.fields.Company || '',
-      bio: record.fields.Bio || '',
-      expertise: record.fields.Expertise || [],
-      email: record.fields.Email || '',
-      phoneNumber: record.fields.phoneNumber || '',
-      slug: createSlug(record.fields.Name || 'mentor'),
-      industries: record.fields['Industries of Interest'] || [],
-      date: record.fields.Date || '',
-      lookbookLabel: record.fields.lookbookLabel || '',
-      lookbookTag: record.fields.lookbookTag || ''
-    }));
+    // Log the raw lookbookTag values from Airtable with more detail
+    console.log('Raw lookbookTag values from Airtable:', 
+      data.records.map((record: any) => ({
+        name: record.fields.Name,
+        lookbookTag: record.fields.lookbookTag,
+        rawFields: record.fields // Log all fields to see what we're getting
+      }))
+    );
+    
+    return data.records.map((record: any) => {
+      // Log the exact value we're checking
+      console.log(`Processing mentor ${record.fields.Name}:`, {
+        rawLookbookTag: record.fields.lookbookTag,
+        isInvestor: record.fields.lookbookTag === 'Investor',
+        isOperator: record.fields.lookbookTag === 'Operator'
+      });
+
+      const mentor = {
+        id: record.id,
+        name: record.fields.Name || 'Unknown',
+        headshot: record.fields.Headshot?.[0]?.url || '/placeholder.svg',
+        linkedinUrl: record.fields.LinkedIn || '#',
+        role: record.fields.Role || '',
+        company: record.fields.Company || '',
+        bio: record.fields.Bio || '',
+        expertise: record.fields.Expertise || [],
+        email: record.fields.Email || '',
+        phoneNumber: record.fields.phoneNumber || '',
+        slug: createSlug(record.fields.Name || 'mentor'),
+        industries: record.fields['Industries of Interest'] || [],
+        date: record.fields.Date || '',
+        lookbookLabel: record.fields.lookbookLabel || '',
+        lookbookTag: Array.isArray(record.fields.lookbookTag) ? 
+          record.fields.lookbookTag.filter((tag: string) => tag === 'Investor' || tag === 'Operator') : 
+          undefined
+      };
+      
+      return mentor;
+    });
   } catch (error) {
     if (error instanceof AirtableError) {
       throw error;

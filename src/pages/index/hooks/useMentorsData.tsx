@@ -40,29 +40,23 @@ export const useMentorsData = () => {
     loadMentors();
   }, []);
 
-  // Get unique dates from all mentors
+  // Memoize available dates and tags
   const availableDates = useMemo(() => {
     const dateSet = new Set<string>();
-    
-    // Add Airtable mentors' dates
     mentors.forEach(mentor => {
       if (mentor.date) dateSet.add(mentor.date);
     });
-    
-    return Array.from(dateSet).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+    return Array.from(dateSet).sort();
   }, [mentors]);
 
-  // Get unique tags from all mentors
   const allTags = useMemo(() => {
-    const tagSet = new Set<string>();
-    
-    // Add Airtable mentors' tags
+    const tagSet = new Set<'Investor' | 'Operator'>();
     mentors.forEach(mentor => {
-      mentor.expertise?.forEach(tag => tagSet.add(tag));
-      mentor.industries?.forEach(tag => tagSet.add(tag));
+      if (mentor.lookbookTag) {
+        mentor.lookbookTag.forEach(tag => tagSet.add(tag));
+      }
     });
-    
-    return Array.from(tagSet).sort();
+    return Array.from(tagSet);
   }, [mentors]);
 
   const handleTagToggle = (tag: string) => {

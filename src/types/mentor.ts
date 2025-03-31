@@ -3,15 +3,15 @@ export interface Mentor {
   name: string;
   headshot: string;
   linkedinUrl: string;
-  role?: string;
-  company?: string;
-  bio?: string;
-  expertise?: string[];
-  email?: string;
-  phoneNumber?: string;
+  role: string;
+  company: string;
+  bio: string;
+  expertise: string[];
+  email: string;
+  phoneNumber: string;
   slug: string;
-  industries?: string[];
-  date?: string;
-  lookbookLabel?: string;
-  lookbookTag?: 'Investor' | 'Operator';
+  industries: string[];
+  date: string;
+  lookbookLabel: string;
+  lookbookTag: ('Investor' | 'Operator')[] | undefined;
 }

@@ -54,15 +54,16 @@ export const useAdditionalMentorsData = () => {
 
   // Get unique tags from all mentors
   const allTags = useMemo(() => {
-    const tagSet = new Set<string>();
+    const tagSet = new Set<'Investor' | 'Operator'>();
     
-    // Add Airtable mentors' tags
+    // Add Airtable mentors' lookbookTags
     mentors.forEach(mentor => {
-      mentor.expertise?.forEach(tag => tagSet.add(tag));
-      mentor.industries?.forEach(tag => tagSet.add(tag));
+      if (mentor.lookbookTag) {
+        mentor.lookbookTag.forEach(tag => tagSet.add(tag));
+      }
     });
     
-    return Array.from(tagSet).sort();
+    return Array.from(tagSet);
   }, [mentors]);
 
   const handleTagToggle = (tag: string) => {

@@ -117,18 +117,14 @@ const MentorCard: React.FC<MentorCardProps> = ({ mentor, index }) => {
                 )
               )}
               <div className="flex flex-wrap gap-1 mt-2">
-                {mentor.date && (
-                  <span className="text-xs px-2 py-0.5 bg-white/20 rounded-full">
-                    {mentor.date}
-                  </span>
-                )}
-                {mentor.lookbookTag && (
+                {mentor.lookbookTag && mentor.lookbookTag.map((tag, index) => (
                   <span 
+                    key={index}
                     className="text-xs px-2 py-0.5 bg-white/20 rounded-full"
                   >
-                    {mentor.lookbookTag}
+                    {tag}
                   </span>
-                )}
+                ))}
               </div>
             </div>
             
