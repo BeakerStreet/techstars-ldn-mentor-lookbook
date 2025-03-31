@@ -26,7 +26,7 @@ const AdditionalMentors = () => {
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
         <Navbar />
         
-        <main className="max-w-7xl mx-auto px-6 md:px-12 pb-36">
+        <main className="max-w-7xl mx-auto px-6 md:px-12 pb-36 pt-24">
           <PageHeader onRefresh={loadMentors} loading={loading} />
           <h2 className="text-3xl font-bold text-techstars-slate mb-8 text-center">Additional Mentors</h2>
           <MentorGrid 

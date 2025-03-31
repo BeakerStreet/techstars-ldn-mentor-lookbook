@@ -6,12 +6,8 @@
 
 ## pm
 
-- [x] rm feedback buttons from addl mentors
-- [x] add "request connection" button -- drafts email to Georgie + Eoghan
-- [x] swap to simpler tags: "investor" / "operator" for now
-- [x] swap "Send Email" to "Cold Email"
-- [x] add whatsapp to addl mentors
-- [ ] [STRETCH] add "georgie description" paragraph
+- [x] sevil not investor bug
+- [x] floating topnav
 
 ## How can I edit this code?
 

@@ -23,7 +23,7 @@ const MentorGrid = ({ mentors, loading, error, selectedTags, selectedDate }: Men
     // Apply tag filter
     if (selectedTags.length > 0) {
       filtered = filtered.filter(mentor => {
-        return selectedTags.every(tag => mentor.lookbookTag === tag);
+        return selectedTags.every(tag => mentor.lookbookTag?.includes(tag as 'Investor' | 'Operator'));
       });
     }
 
