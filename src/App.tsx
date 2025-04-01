@@ -7,6 +7,8 @@ import Index from "./pages/Index";
 import MentorDetail from "./pages/MentorDetail";
 import NotFound from "./pages/NotFound";
 import AdditionalMentors from "./pages/AdditionalMentors";
+import Founders from "./pages/Founders";
+import FounderDetail from "./pages/FounderDetail";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +22,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/mentor/:slug" element={<MentorDetail />} />
           <Route path="/additional-mentors" element={<AdditionalMentors />} />
+          <Route path="/founders" element={<Founders />} />
+          <Route path="/founders/:slug" element={<FounderDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
