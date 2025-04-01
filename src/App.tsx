@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import AdditionalMentors from "./pages/AdditionalMentors";
 import Founders from "./pages/Founders";
 import FounderDetail from "./pages/FounderDetail";
+import CompanyDetail from "./pages/CompanyDetail";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/additional-mentors" element={<AdditionalMentors />} />
           <Route path="/founders" element={<Founders />} />
           <Route path="/founders/:slug" element={<FounderDetail />} />
+          <Route path="/companies/:slug" element={<CompanyDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

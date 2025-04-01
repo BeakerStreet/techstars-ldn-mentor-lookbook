@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react';
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-  const isMentorPage = location.pathname === '/' || location.pathname === '/additional-mentors';
+  const isMentorPage = location.pathname === '/' || 
+                      location.pathname === '/additional-mentors' || 
+                      location.pathname.startsWith('/mentor/');
 
   useEffect(() => {
     const handleScroll = () => {
