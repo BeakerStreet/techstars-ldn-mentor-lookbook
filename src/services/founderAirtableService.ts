@@ -5,7 +5,7 @@ export const getFounderAirtableConfig = () => {
   return {
     token: import.meta.env.VITE_FOUNDER_AIRTABLE_API_TOKEN || '',
     baseId: import.meta.env.VITE_FOUNDER_AIRTABLE_BASE_ID || '',
-    tableName: import.meta.env.VITE_FOUNDER_AIRTABLE_TABLE_NAME || 'Founders'
+    tableId: import.meta.env.VITE_FOUNDER_AIRTABLE_TABLE_ID || 'tbl0QMMe09tybCQ0K'  // Fallback to the known ID
   };
 };
 
@@ -22,16 +22,23 @@ class AirtableError extends Error {
 }
 
 export async function fetchFounders(): Promise<Founder[]> {
-  const { token, baseId, tableName } = getFounderAirtableConfig();
+  const { token, baseId, tableId } = getFounderAirtableConfig();
+  
+  console.log('Founder Airtable Config:', {
+    hasToken: !!token,
+    baseId,
+    tableId
+  });
   
   if (!token || !baseId) {
     throw new AirtableError('Founder Airtable API credentials not configured in environment variables');
   }
 
   try {
-    const cleanTableName = tableName.split('/')[0].split('?')[0].trim();
-    const filterByFormula = encodeURIComponent("lookbookLabel='FL'");
-    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}?filterByFormula=${filterByFormula}&_=${Date.now()}`;
+    const filterByFormula = encodeURIComponent("lookbookInclude='TRUE'");
+    const url = `https://api.airtable.com/v0/${baseId}/${tableId}?filterByFormula=${filterByFormula}&_=${Date.now()}`;
+    
+    console.log('Fetching founders from URL:', url);
     
     const response = await fetch(url, {
       headers: {
@@ -64,6 +71,15 @@ export async function fetchFounders(): Promise<Founder[]> {
     }
 
     const data = await response.json();
+    console.log('Airtable Response:', {
+      recordCount: data.records?.length || 0,
+      firstRecord: data.records?.[0]?.fields ? {
+        name: data.records[0].fields.Name,
+        hasHeadshot: !!data.records[0].fields.Headshot,
+        title: data.records[0].fields.Title,
+        company: data.records[0].fields['Company Name']
+      } : null
+    });
     
     return data.records.map((record: any) => {
       const founder = {
@@ -71,12 +87,12 @@ export async function fetchFounders(): Promise<Founder[]> {
         name: record.fields.Name || 'Unknown',
         headshot: record.fields.Headshot?.[0]?.url || '/placeholder.svg',
         linkedinUrl: record.fields.LinkedIn || '#',
-        role: record.fields.Role || '',
-        company: record.fields.Company || '',
+        role: record.fields.Title || '',
+        company: record.fields['Company Name'] || '',
         bio: record.fields.Bio || '',
         expertise: record.fields.Expertise || [],
         email: record.fields.Email || '',
-        phoneNumber: record.fields.phoneNumber || '',
+        phoneNumber: record.fields['Cell Phone Number'] || '',
         slug: createSlug(record.fields.Name || 'founder'),
         industries: record.fields['Industries of Interest'] || [],
         date: record.fields.Date || '',
@@ -85,16 +101,17 @@ export async function fetchFounders(): Promise<Founder[]> {
           record.fields.lookbookTag.filter((tag: string) => tag === 'Investor' || tag === 'Operator') : 
           undefined,
         // Founder-specific fields
-        companyStage: record.fields.CompanyStage || '',
-        companyDescription: record.fields.CompanyDescription || '',
-        fundingRound: record.fields.FundingRound || '',
-        teamSize: record.fields.TeamSize || '',
+        companyStage: record.fields['Company Stage'] || '',
+        companyDescription: record.fields['Company Description'] || '',
+        fundingRound: record.fields['Funding Round'] || '',
+        teamSize: record.fields['Team Size'] || '',
         location: record.fields.Location || ''
       };
       
       return founder;
     });
   } catch (error) {
+    console.error('Error in fetchFounders:', error);
     if (error instanceof AirtableError) {
       throw error;
     }
@@ -103,18 +120,26 @@ export async function fetchFounders(): Promise<Founder[]> {
 }
 
 export async function fetchFounderBySlug(slug: string): Promise<Founder | null> {
-  const { token, baseId, tableName } = getFounderAirtableConfig();
+  const { token, baseId, tableId } = getFounderAirtableConfig();
+  
+  console.log('Fetching founder by slug:', {
+    slug,
+    hasToken: !!token,
+    baseId,
+    tableId
+  });
   
   if (!token || !baseId) {
     throw new AirtableError('Founder Airtable API credentials not configured in environment variables');
   }
 
   try {
-    const cleanTableName = tableName.split('/')[0].split('?')[0].trim();
     const filterByFormula = encodeURIComponent(
-      `AND(lookbookLabel='FL', Name='${slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}')`
+      `AND(lookbookInclude='TRUE', Name='${slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}')`
     );
-    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}?filterByFormula=${filterByFormula}&_=${Date.now()}`;
+    const url = `https://api.airtable.com/v0/${baseId}/${tableId}?filterByFormula=${filterByFormula}&_=${Date.now()}`;
+    
+    console.log('Fetching founder from URL:', url);
     
     const response = await fetch(url, {
       headers: {
@@ -147,8 +172,18 @@ export async function fetchFounderBySlug(slug: string): Promise<Founder | null> 
     }
 
     const data = await response.json();
+    console.log('Airtable Response:', {
+      recordCount: data.records?.length || 0,
+      foundRecord: data.records?.[0]?.fields ? {
+        name: data.records[0].fields.Name,
+        hasHeadshot: !!data.records[0].fields.Headshot,
+        title: data.records[0].fields.Title,
+        company: data.records[0].fields['Company Name']
+      } : null
+    });
     
     if (data.records.length === 0) {
+      console.log('No founder found for slug:', slug);
       return null;
     }
 
@@ -158,12 +193,12 @@ export async function fetchFounderBySlug(slug: string): Promise<Founder | null> 
       name: record.fields.Name || 'Unknown',
       headshot: record.fields.Headshot?.[0]?.url || '/placeholder.svg',
       linkedinUrl: record.fields.LinkedIn || '#',
-      role: record.fields.Role || '',
-      company: record.fields.Company || '',
+      role: record.fields.Title || '',
+      company: record.fields['Company Name'] || '',
       bio: record.fields.Bio || '',
       expertise: record.fields.Expertise || [],
       email: record.fields.Email || '',
-      phoneNumber: record.fields.phoneNumber || '',
+      phoneNumber: record.fields['Cell Phone Number'] || '',
       slug: createSlug(record.fields.Name || 'founder'),
       industries: record.fields['Industries of Interest'] || [],
       date: record.fields.Date || '',
@@ -172,13 +207,14 @@ export async function fetchFounderBySlug(slug: string): Promise<Founder | null> 
         record.fields.lookbookTag.filter((tag: string) => tag === 'Investor' || tag === 'Operator') : 
         undefined,
       // Founder-specific fields
-      companyStage: record.fields.CompanyStage || '',
-      companyDescription: record.fields.CompanyDescription || '',
-      fundingRound: record.fields.FundingRound || '',
-      teamSize: record.fields.TeamSize || '',
+      companyStage: record.fields['Company Stage'] || '',
+      companyDescription: record.fields['Company Description'] || '',
+      fundingRound: record.fields['Funding Round'] || '',
+      teamSize: record.fields['Team Size'] || '',
       location: record.fields.Location || ''
     };
   } catch (error) {
+    console.error('Error in fetchFounderBySlug:', error);
     if (error instanceof AirtableError) {
       throw error;
     }

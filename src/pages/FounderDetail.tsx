@@ -4,7 +4,7 @@ import { fetchFounderBySlug } from '../services/founderAirtableService';
 import { Founder } from '../types/founder';
 import Navbar from '../components/Navbar';
 import AnimatedPageTransition from '../components/AnimatedPageTransition';
-import { ArrowLeft, Linkedin, Mail, Phone, MapPin, Users, Building2, Rocket } from 'lucide-react';
+import { ArrowLeft, Linkedin, Mail, Phone } from 'lucide-react';
 
 // Fun placeholder images for founders without headshots
 const placeholderImages = [
@@ -79,7 +79,7 @@ const FounderDetail = () => {
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
         <Navbar />
         
-        <main className="max-w-5xl mx-auto px-6 md:px-12 pb-20">
+        <main className="max-w-5xl mx-auto px-6 md:px-12 pb-20 mt-24">
           <Link 
             to="/founders" 
             className="inline-flex items-center py-2 px-4 mb-8 text-sm hover:text-techstars-phosphor transition-colors duration-300"
@@ -141,59 +141,6 @@ const FounderDetail = () => {
                       </div>
                       <span>Email Directly</span>
                     </a>
-                  )}
-                </div>
-
-                {/* Company Information */}
-                <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
-                  <h3 className="text-lg font-semibold mb-2">Company Information</h3>
-                  
-                  {founder.companyStage && (
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-techstars-phosphor/10 rounded-md text-techstars-phosphor">
-                        <Rocket size={20} />
-                      </div>
-                      <div>
-                        <div className="text-sm text-gray-500">Stage</div>
-                        <div>{founder.companyStage}</div>
-                      </div>
-                    </div>
-                  )}
-
-                  {founder.teamSize && (
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-techstars-phosphor/10 rounded-md text-techstars-phosphor">
-                        <Users size={20} />
-                      </div>
-                      <div>
-                        <div className="text-sm text-gray-500">Team Size</div>
-                        <div>{founder.teamSize}</div>
-                      </div>
-                    </div>
-                  )}
-
-                  {founder.fundingRound && (
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-techstars-phosphor/10 rounded-md text-techstars-phosphor">
-                        <Building2 size={20} />
-                      </div>
-                      <div>
-                        <div className="text-sm text-gray-500">Funding Round</div>
-                        <div>{founder.fundingRound}</div>
-                      </div>
-                    </div>
-                  )}
-
-                  {founder.location && (
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-techstars-phosphor/10 rounded-md text-techstars-phosphor">
-                        <MapPin size={20} />
-                      </div>
-                      <div>
-                        <div className="text-sm text-gray-500">Location</div>
-                        <div>{founder.location}</div>
-                      </div>
-                    </div>
                   )}
                 </div>
               </div>

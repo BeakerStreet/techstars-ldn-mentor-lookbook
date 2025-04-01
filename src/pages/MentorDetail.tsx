@@ -81,7 +81,7 @@ const MentorDetail = () => {
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
         <Navbar />
         
-        <main className="max-w-5xl mx-auto px-6 md:px-12 pb-20">
+        <main className="max-w-5xl mx-auto px-6 md:px-12 pb-20 mt-24">
           <Link 
             to="/" 
             className="inline-flex items-center py-2 px-4 mb-8 text-sm hover:text-techstars-phosphor transition-colors duration-300"
