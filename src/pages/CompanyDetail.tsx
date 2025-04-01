@@ -120,11 +120,33 @@ const CompanyDetail = () => {
               {/* Company Header */}
               <div className="bg-white rounded-xl shadow-sm p-8">
                 <div className="flex items-center gap-6 mb-6">
-                  <img 
-                    src={company.logo || '/placeholder.svg'} 
-                    alt={company.company} 
-                    className="w-24 h-24 object-contain"
-                  />
+                  <div className="overflow-hidden rounded-xl shadow-lg relative">
+                    {company.logo ? (
+                      <img 
+                        src={company.logo} 
+                        alt={`${company.company} logo`}
+                        className="w-24 h-24 object-contain bg-gradient-to-br from-gray-50 to-gray-100 p-8"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.parentElement?.classList.add('flex', 'items-center', 'justify-center');
+                          const letterDiv = document.createElement('div');
+                          letterDiv.className = 'text-8xl font-bold text-gray-400';
+                          letterDiv.textContent = company.company.charAt(0);
+                          target.parentElement?.appendChild(letterDiv);
+                        }}
+                      />
+                    ) : (
+                      <div className="w-24 h-24 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+                        <span className="text-8xl font-bold text-gray-400">{company.company.charAt(0)}</span>
+                      </div>
+                    )}
+                    {(!company.logo || company.logo === '/placeholder.svg') && (
+                      <div className="absolute top-4 right-4 bg-blue-500 text-white text-xs px-3 py-1 rounded-full">
+                        May Look Different
+                      </div>
+                    )}
+                  </div>
                   <div>
                     <h1 className="text-3xl md:text-4xl font-bold mb-2">{company.company}</h1>
                     <p className="text-techstars-slate text-lg">{company.oneLiner}</p>
