@@ -126,9 +126,18 @@ export async function fetchMentorBySlug(slug: string): Promise<Mentor | null> {
     // Clean up the tableName in case it contains any slashes or extra path segments
     const cleanTableName = tableName.split('/')[0].split('?')[0].trim();
     
-    // Search for mentor in both labels
+    // Clean up the name from the slug, handling special characters and extra spaces
+    const nameFromSlug = slug
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+      .replace(/[^\w\s]/g, '') // Remove special characters
+      .replace(/\s+/g, ' ')    // Replace multiple spaces with single space
+      .trim();                 // Trim leading/trailing spaces
+    
+    // Search for mentor in both labels with more flexible name matching
     const filterByFormula = encodeURIComponent(
-      `AND(OR(lookbookLabel='MM', lookbookLabel='AM'), Name='${slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}')`
+      `AND(OR(lookbookLabel='MM', lookbookLabel='AM'), LOWER(TRIM(REGEX_REPLACE(Name, '[^a-zA-Z0-9\\s]', '')))='${nameFromSlug.toLowerCase()}')`
     );
     const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(cleanTableName)}?filterByFormula=${filterByFormula}&_=${Date.now()}`;
     
