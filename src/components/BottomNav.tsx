@@ -24,7 +24,7 @@ const BottomNav = () => {
               to="/founders"
               className="text-sm text-techstars-slate hover:text-techstars-phosphor transition-colors duration-300"
             >
-              Go to founders
+              Go to cohort
             </Link>
           )}
         </div>
