@@ -39,7 +39,7 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
   // For mobile devices, use a drawer
   if (isMobile) {
     return (
-      <div className="fixed bottom-4 inset-x-4 z-50">
+      <div className="fixed bottom-[60px] inset-x-4 z-50">
         <div className="flex gap-2 justify-between">
           {hasActiveFilters && (
             <Button 
@@ -147,7 +147,7 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
 
   // For desktop, show a floating bar
   return (
-    <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 w-auto max-w-3xl">
+    <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50 w-auto max-w-3xl">
       <div className="bg-white rounded-full shadow-lg px-6 py-3 flex items-center gap-4 border border-gray-100">
         {/* Date Filter Button */}
         {availableDates.length > 0 && (
@@ -197,7 +197,7 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
           <DrawerTrigger asChild>
             <Button variant="outline" size="sm" className="rounded-full">
               <Filter size={16} className="mr-2" />
-              Filter by tag
+              Filter by company
               {selectedTags.length > 0 && (
                 <span className="ml-2 bg-techstars-phosphor text-white w-5 h-5 rounded-full text-xs flex items-center justify-center">
                   {selectedTags.length}
@@ -207,9 +207,9 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
           </DrawerTrigger>
           <DrawerContent>
             <DrawerHeader>
-              <DrawerTitle>Filter by tag</DrawerTitle>
+              <DrawerTitle>Filter by company</DrawerTitle>
               <DrawerDescription>
-                Select one or more tags to filter mentors
+                Select a company to filter founders
               </DrawerDescription>
             </DrawerHeader>
             <div className="p-4">
