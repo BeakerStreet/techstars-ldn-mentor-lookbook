@@ -1,8 +1,24 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 const Navbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
+  const isMentorPage = location.pathname === '/' || location.pathname === '/additional-mentors';
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm py-6 px-6 md:px-12">
+    <nav className={`z-50 bg-white/80 backdrop-blur-sm shadow-sm py-6 px-6 md:px-12 transition-all duration-300 ${
+      isScrolled ? 'fixed top-0 left-0 right-0' : 'relative'
+    }`}>
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link 
           to="/" 
@@ -14,24 +30,34 @@ const Navbar = () => {
           <span>Techstars London</span>
         </Link>
         
-        <div className="flex gap-4">
-          <Link 
-            to="/"
-            className="text-sm text-techstars-slate animate-fade-in hover:text-techstars-phosphor transition-colors duration-300"
-          >
-            <div className="px-3 py-1 rounded-full border border-techstars-slate/30 hover:border-techstars-phosphor/30">
-              Mentor Magic
-            </div>
-          </Link>
-          <Link 
-            to="/additional-mentors"
-            className="text-sm text-techstars-slate animate-fade-in hover:text-techstars-phosphor transition-colors duration-300"
-          >
-            <div className="px-3 py-1 rounded-full border border-techstars-slate/30 hover:border-techstars-phosphor/30">
-              Additional Mentors
-            </div>
-          </Link>
-        </div>
+        {isMentorPage && (
+          <div className="flex gap-4">
+            <Link 
+              to="/"
+              className={`text-sm animate-fade-in transition-colors duration-300 ${
+                location.pathname === '/'
+                  ? 'text-techstars-phosphor border-techstars-phosphor/30'
+                  : 'text-techstars-slate border-techstars-slate/30 hover:text-techstars-phosphor hover:border-techstars-phosphor/30'
+              }`}
+            >
+              <div className="px-3 py-1 rounded-full border">
+                Mentor Magic
+              </div>
+            </Link>
+            <Link 
+              to="/additional-mentors"
+              className={`text-sm animate-fade-in transition-colors duration-300 ${
+                location.pathname === '/additional-mentors'
+                  ? 'text-techstars-phosphor border-techstars-phosphor/30'
+                  : 'text-techstars-slate border-techstars-slate/30 hover:text-techstars-phosphor hover:border-techstars-phosphor/30'
+              }`}
+            >
+              <div className="px-3 py-1 rounded-full border">
+                Additional Mentors
+              </div>
+            </Link>
+          </div>
+        )}
       </div>
     </nav>
   );

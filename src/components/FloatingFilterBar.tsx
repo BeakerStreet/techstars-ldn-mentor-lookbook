@@ -39,7 +39,7 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
   // For mobile devices, use a drawer
   if (isMobile) {
     return (
-      <div className="fixed bottom-4 inset-x-4 z-50">
+      <div className="fixed bottom-[60px] inset-x-4 z-50">
         <div className="flex gap-2 justify-between">
           {hasActiveFilters && (
             <Button 
@@ -147,7 +147,7 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
 
   // For desktop, show a floating bar
   return (
-    <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 w-auto max-w-3xl">
+    <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50 w-auto max-w-3xl">
       <div className="bg-white rounded-full shadow-lg px-6 py-3 flex items-center gap-4 border border-gray-100">
         {/* Date Filter Button */}
         {availableDates.length > 0 && (
