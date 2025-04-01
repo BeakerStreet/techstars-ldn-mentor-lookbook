@@ -197,7 +197,7 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
           <DrawerTrigger asChild>
             <Button variant="outline" size="sm" className="rounded-full">
               <Filter size={16} className="mr-2" />
-              Filter by tag
+              Filter by company
               {selectedTags.length > 0 && (
                 <span className="ml-2 bg-techstars-phosphor text-white w-5 h-5 rounded-full text-xs flex items-center justify-center">
                   {selectedTags.length}
@@ -207,9 +207,9 @@ const FloatingFilterBar: React.FC<FloatingFilterBarProps> = ({
           </DrawerTrigger>
           <DrawerContent>
             <DrawerHeader>
-              <DrawerTitle>Filter by tag</DrawerTitle>
+              <DrawerTitle>Filter by company</DrawerTitle>
               <DrawerDescription>
-                Select one or more tags to filter mentors
+                Select a company to filter founders
               </DrawerDescription>
             </DrawerHeader>
             <div className="p-4">
