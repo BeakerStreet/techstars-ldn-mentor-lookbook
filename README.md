@@ -8,9 +8,9 @@
 
 - [x] sevil not investor bug
 - [x] floating topnav
-- [ ] founders airtable integration
-- [ ] remove founders link from the top navbar
-- [ ] add bottom navbar with mentors / founders toggle
+- [x] founders airtable integration
+- [x] remove founders link from the top navbar
+- [x] add bottom navbar with mentors / founders toggle
 
 ## How can I edit this code?
 
