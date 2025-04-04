@@ -141,11 +141,6 @@ const CompanyDetail = () => {
                         <span className="text-8xl font-bold text-gray-400">{company.company.charAt(0)}</span>
                       </div>
                     )}
-                    {(!company.logo || company.logo === '/placeholder.svg') && (
-                      <div className="absolute top-4 right-4 bg-blue-500 text-white text-xs px-3 py-1 rounded-full">
-                        May Look Different
-                      </div>
-                    )}
                   </div>
                   <div>
                     <h1 className="text-3xl md:text-4xl font-bold mb-2">{company.company}</h1>
@@ -242,6 +237,11 @@ const CompanyDetail = () => {
                           {(founder.role || founder.company) && (
                             <p className="text-techstars-slate text-lg">
                               {getFormattedRoleAndCompany(founder)}
+                            </p>
+                          )}
+                          {founder.lookbookBio && (
+                            <p className="text-gray-700 mt-4 leading-relaxed">
+                              {founder.lookbookBio}
                             </p>
                           )}
                         </div>

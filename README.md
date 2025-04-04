@@ -11,6 +11,9 @@
 - [x] founders airtable integration
 - [x] remove founders link from the top navbar
 - [x] add bottom navbar with mentors / founders toggle
+- [ ] add founder bios
+- [ ] add "asks"
+- [ ] add 100+ more mentors
 
 ## How can I edit this code?
 

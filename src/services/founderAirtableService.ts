@@ -14,6 +14,14 @@ export const isFounderAirtableConfigured = () => {
   return !!token && !!baseId;
 };
 
+const getFounderOnboardingConfig = () => {
+  return {
+    token: import.meta.env.VITE_FOUNDER_ONBOARDING_AIRTABLE_API_TOKEN || '',
+    baseId: import.meta.env.VITE_FOUNDER_ONBOARDING_AIRTABLE_BASE_ID || '',
+    tableId: import.meta.env.VITE_FOUNDER_ONBOARDING_AIRTABLE_TABLE_ID || 'tbldVJRW3MbvxyHAv'
+  };
+};
+
 class AirtableError extends Error {
   constructor(message: string, public status?: number, public details?: any) {
     super(message);
@@ -81,7 +89,9 @@ export async function fetchFounders(): Promise<Founder[]> {
       } : null
     });
     
-    return data.records.map((record: any) => {
+    return Promise.all(data.records.map(async (record: any) => {
+      const lookbookBio = await fetchFounderLookbookBio(record.fields.Name || '');
+      
       const founder = {
         id: record.id,
         name: record.fields.Name || 'Unknown',
@@ -97,6 +107,7 @@ export async function fetchFounders(): Promise<Founder[]> {
         industries: record.fields['Industries of Interest'] || [],
         date: record.fields.Date || '',
         lookbookLabel: record.fields.lookbookLabel || '',
+        lookbookBio,
         lookbookTag: Array.isArray(record.fields.lookbookTag) ? 
           record.fields.lookbookTag.filter((tag: string) => tag === 'Investor' || tag === 'Operator') : 
           undefined,
@@ -109,13 +120,48 @@ export async function fetchFounders(): Promise<Founder[]> {
       };
       
       return founder;
-    });
+    }));
   } catch (error) {
     console.error('Error in fetchFounders:', error);
     if (error instanceof AirtableError) {
       throw error;
     }
     throw new AirtableError('Failed to fetch founders: Network error or invalid response');
+  }
+}
+
+async function fetchFounderLookbookBio(founderName: string): Promise<string> {
+  const { token, baseId, tableId } = getFounderOnboardingConfig();
+  
+  if (!token || !baseId) {
+    console.warn('Founder onboarding Airtable config not found');
+    return '';
+  }
+
+  try {
+    const filterByFormula = encodeURIComponent(`Name='${founderName}'`);
+    const url = `https://api.airtable.com/v0/${baseId}/${tableId}?filterByFormula=${filterByFormula}`;
+    
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    });
+
+    if (!response.ok) {
+      console.warn('Failed to fetch founder lookbook bio:', response.statusText);
+      return '';
+    }
+
+    const data = await response.json();
+    if (data.records.length === 0) {
+      return '';
+    }
+
+    return data.records[0].fields.lookbookBio || '';
+  } catch (error) {
+    console.warn('Error fetching founder lookbook bio:', error);
+    return '';
   }
 }
 
@@ -188,6 +234,8 @@ export async function fetchFounderBySlug(slug: string): Promise<Founder | null> 
     }
 
     const record = data.records[0];
+    const lookbookBio = await fetchFounderLookbookBio(record.fields.Name || '');
+    
     return {
       id: record.id,
       name: record.fields.Name || 'Unknown',
@@ -203,6 +251,7 @@ export async function fetchFounderBySlug(slug: string): Promise<Founder | null> 
       industries: record.fields['Industries of Interest'] || [],
       date: record.fields.Date || '',
       lookbookLabel: record.fields.lookbookLabel || '',
+      lookbookBio,
       lookbookTag: Array.isArray(record.fields.lookbookTag) ? 
         record.fields.lookbookTag.filter((tag: string) => tag === 'Investor' || tag === 'Operator') : 
         undefined,
