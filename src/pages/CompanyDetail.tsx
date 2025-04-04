@@ -7,7 +7,6 @@ import { Company } from '../types/company';
 import Navbar from '../components/Navbar';
 import AnimatedPageTransition from '../components/AnimatedPageTransition';
 import CompanyHeader from '../components/CompanyHeader';
-import CompanyAsks from '../components/CompanyAsks';
 import FoundersList from '../components/FoundersList';
 import { ArrowLeft } from 'lucide-react';
 
@@ -83,7 +82,6 @@ const CompanyDetail = () => {
           ) : company ? (
             <div className="space-y-8">
               <CompanyHeader company={company} />
-              <CompanyAsks company={company} />
               <FoundersList founders={founders} />
             </div>
           ) : (
