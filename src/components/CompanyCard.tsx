@@ -1,13 +1,18 @@
 import { Link } from 'react-router-dom';
 import { Company } from '../types/company';
 import { Linkedin, Globe } from 'lucide-react';
+import { createSlug } from '../services/companyAirtableService';
 
 interface CompanyCardProps {
   company: Company;
 }
 
 const CompanyCard = ({ company }: CompanyCardProps) => {
-  const slug = company.company.toLowerCase().replace(/\s+/g, '-');
+  const slug = createSlug(company.lookbookCompanyName);
+  console.log('Debug - CompanyCard slug creation:', {
+    originalCompanyName: company.company,
+    createdSlug: slug
+  });
   const firstLetter = company.company.charAt(0).toUpperCase();
 
   return (

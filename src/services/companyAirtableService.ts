@@ -23,6 +23,8 @@ function createSlug(name: string): string {
     .replace(/\s+/g, '-');
 }
 
+export { createSlug };
+
 export const fetchCompanies = async (): Promise<Company[]> => {
   const { token, baseId, tableId } = getAirtableConfig();
   
@@ -60,12 +62,13 @@ export const fetchCompanies = async (): Promise<Company[]> => {
     return data.records.map((record: any) => ({
       id: record.id,
       company: record.fields.company || '',
+      lookbookCompanyName: record.fields.lookbookCompanyName || record.fields.company || '',
       URL: record.fields.URL || '',
       companyLinkedIn: record.fields.companyLinkedIn || '',
-      logo: record.fields.logo?.[0]?.url || '/placeholder.svg',
+      logo: record.fields.logo?.[0]?.url || '',
       oneLiner: record.fields.oneLiner || '',
       founders: record.fields.founders || '',
-      slug: createSlug(record.fields.company || '')
+      slug: createSlug(record.fields.lookbookCompanyName || record.fields.company || '')
     }));
   } catch (error) {
     if (error instanceof AirtableError) {
@@ -83,54 +86,15 @@ export const fetchCompanyBySlug = async (slug: string): Promise<Company | null> 
   }
 
   try {
-    // Convert slug back to company name format (capitalize first letter of each word)
-    const companyName = slug
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-
-    const filterByFormula = encodeURIComponent(`company='${companyName}'`);
-    const url = `https://api.airtable.com/v0/${baseId}/${tableId}?filterByFormula=${filterByFormula}`;
+    // Get all companies and find the one with matching slug
+    const companies = await fetchCompanies();
+    const company = companies.find(c => c.slug === slug);
     
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorDetails;
-      try {
-        errorDetails = JSON.parse(errorText);
-      } catch {
-        errorDetails = errorText;
-      }
-      
-      throw new AirtableError(
-        `Failed to fetch company: ${response.status} ${response.statusText}`,
-        response.status,
-        errorDetails
-      );
-    }
-
-    const data = await response.json();
-    
-    if (data.records.length === 0) {
+    if (!company) {
       return null;
     }
 
-    const record = data.records[0];
-    return {
-      id: record.id,
-      company: record.fields.company || '',
-      URL: record.fields.URL || '',
-      companyLinkedIn: record.fields.companyLinkedIn || '',
-      logo: record.fields.logo?.[0]?.url || '/placeholder.svg',
-      oneLiner: record.fields.oneLiner || '',
-      founders: record.fields.founders || '',
-      slug: createSlug(record.fields.company || '')
-    };
+    return company;
   } catch (error) {
     if (error instanceof AirtableError) {
       throw error;
