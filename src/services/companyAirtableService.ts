@@ -103,4 +103,50 @@ export const fetchCompanyBySlug = async (slug: string): Promise<Company | null> 
     }
     throw new AirtableError('Failed to fetch company by slug');
   }
+};
+
+export const updateCompanyField = async (companyId: string, field: string, value: string): Promise<void> => {
+  const { token, baseId, tableId } = getAirtableConfig();
+  
+  if (!token || !baseId || !tableId) {
+    throw new AirtableError('Airtable API credentials not configured in environment variables');
+  }
+
+  try {
+    const url = `https://api.airtable.com/v0/${baseId}/${tableId}/${companyId}`;
+    
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        fields: {
+          [field]: value
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorDetails;
+      try {
+        errorDetails = JSON.parse(errorText);
+      } catch {
+        errorDetails = errorText;
+      }
+      
+      throw new AirtableError(
+        `Failed to update company field: ${response.status} ${response.statusText}`,
+        response.status,
+        errorDetails
+      );
+    }
+  } catch (error) {
+    if (error instanceof AirtableError) {
+      throw error;
+    }
+    throw new AirtableError('Failed to update company field: Network error or invalid response');
+  }
 }; 
