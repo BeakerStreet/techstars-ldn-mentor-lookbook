@@ -276,4 +276,74 @@ function createSlug(name: string): string {
     .toLowerCase()
     .replace(/[^\w\s]/gi, '')
     .replace(/\s+/g, '-');
-} 
+}
+
+export const updateFounderOnboardingField = async (founderName: string, field: string, value: string): Promise<void> => {
+  const { token, baseId, tableId } = getFounderOnboardingConfig();
+  
+  if (!token || !baseId) {
+    throw new AirtableError('Founder onboarding Airtable config not configured in environment variables');
+  }
+
+  try {
+    // First, get the record ID for the founder
+    const filterByFormula = encodeURIComponent(`Name='${founderName}'`);
+    const url = `https://api.airtable.com/v0/${baseId}/${tableId}?filterByFormula=${filterByFormula}`;
+    
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    });
+
+    if (!response.ok) {
+      throw new AirtableError(
+        `Failed to fetch founder record: ${response.status} ${response.statusText}`,
+        response.status
+      );
+    }
+
+    const data = await response.json();
+    if (data.records.length === 0) {
+      throw new AirtableError('Founder record not found');
+    }
+
+    const recordId = data.records[0].id;
+
+    // Now update the field
+    const updateUrl = `https://api.airtable.com/v0/${baseId}/${tableId}/${recordId}`;
+    const updateResponse = await fetch(updateUrl, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        fields: {
+          [field]: value
+        }
+      })
+    });
+
+    if (!updateResponse.ok) {
+      const errorText = await updateResponse.text();
+      let errorDetails;
+      try {
+        errorDetails = JSON.parse(errorText);
+      } catch {
+        errorDetails = errorText;
+      }
+      
+      throw new AirtableError(
+        `Failed to update founder field: ${updateResponse.status} ${updateResponse.statusText}`,
+        updateResponse.status,
+        errorDetails
+      );
+    }
+  } catch (error) {
+    if (error instanceof AirtableError) {
+      throw error;
+    }
+    throw new AirtableError('Failed to update founder field: Network error or invalid response');
+  }
+}; 

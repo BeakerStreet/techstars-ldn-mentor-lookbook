@@ -1,5 +1,7 @@
 import { Founder } from '../types/founder';
-import { Phone, Mail, Linkedin } from 'lucide-react';
+import { Phone, Mail, Linkedin, Edit, Save } from 'lucide-react';
+import { useState } from 'react';
+import { updateFounderOnboardingField } from '../services/founderAirtableService';
 
 interface FoundersListProps {
   founders: Founder[];
@@ -8,6 +10,10 @@ interface FoundersListProps {
 const MAX_ROLE_LENGTH = 80;
 
 const FoundersList = ({ founders }: FoundersListProps) => {
+  const [editingFounderId, setEditingFounderId] = useState<string | null>(null);
+  const [editingBio, setEditingBio] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
   // Format role and company with character limit
   const getFormattedRoleAndCompany = (founder: Founder) => {
     if (!founder.role && !founder.company) return '';
@@ -21,6 +27,26 @@ const FoundersList = ({ founders }: FoundersListProps) => {
     }
     
     return `${roleAndCompany.substring(0, MAX_ROLE_LENGTH)}...`;
+  };
+
+  const handleEdit = (founder: Founder) => {
+    setEditingFounderId(founder.id);
+    setEditingBio(founder.lookbookBio || '');
+  };
+
+  const handleSave = async (founder: Founder) => {
+    setIsSaving(true);
+    try {
+      await updateFounderOnboardingField(founder.name, 'lookbookBio', editingBio);
+      // Update the founder object in the parent component
+      founder.lookbookBio = editingBio;
+      setEditingFounderId(null);
+    } catch (error) {
+      console.error('Failed to save lookbook bio:', error);
+      // You might want to add error handling UI here
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (!founders.length) {
@@ -91,9 +117,43 @@ const FoundersList = ({ founders }: FoundersListProps) => {
                 {(founder.role || founder.company) && (
                   <p className="text-techstars-slate text-lg">{getFormattedRoleAndCompany(founder)}</p>
                 )}
-                {founder.lookbookBio && (
-                  <p className="text-gray-700 mt-4 leading-relaxed">{founder.lookbookBio}</p>
-                )}
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-xl font-semibold">Lookbook Bio</h4>
+                    {editingFounderId === founder.id ? (
+                      <button
+                        onClick={() => handleSave(founder)}
+                        disabled={isSaving}
+                        className={`flex items-center gap-2 text-white bg-techstars-phosphor hover:bg-techstars-phosphor-dark transition-colors px-4 py-2 rounded-md ${
+                          isSaving ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
+                      >
+                        <Save size={16} />
+                        {isSaving ? 'Saving...' : 'Save'}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleEdit(founder)}
+                        className="text-techstars-phosphor hover:text-techstars-phosphor-dark transition-colors flex items-center gap-2"
+                      >
+                        <Edit size={16} />
+                        Edit Bio
+                      </button>
+                    )}
+                  </div>
+                  {editingFounderId === founder.id ? (
+                    <textarea
+                      value={editingBio}
+                      onChange={(e) => setEditingBio(e.target.value)}
+                      className="w-full p-4 border rounded-md focus:ring-2 focus:ring-techstars-phosphor focus:border-transparent min-h-[200px]"
+                      placeholder="Write your lookbook bio here..."
+                    />
+                  ) : (
+                    <p className="text-gray-700 leading-relaxed">
+                      {founder.lookbookBio || 'No lookbook bio available.'}
+                    </p>
+                  )}
+                </div>
               </div>
               
               {founder.bio && (
