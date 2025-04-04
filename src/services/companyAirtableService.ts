@@ -23,6 +23,8 @@ function createSlug(name: string): string {
     .replace(/\s+/g, '-');
 }
 
+export { createSlug };
+
 export const fetchCompanies = async (): Promise<Company[]> => {
   const { token, baseId, tableId } = getAirtableConfig();
   
@@ -60,12 +62,15 @@ export const fetchCompanies = async (): Promise<Company[]> => {
     return data.records.map((record: any) => ({
       id: record.id,
       company: record.fields.company || '',
+      lookbookCompanyName: record.fields.lookbookCompanyName || record.fields.company || '',
       URL: record.fields.URL || '',
       companyLinkedIn: record.fields.companyLinkedIn || '',
-      logo: record.fields.logo?.[0]?.url || '/placeholder.svg',
+      logo: record.fields.logo?.[0]?.url || '',
       oneLiner: record.fields.oneLiner || '',
       founders: record.fields.founders || '',
-      slug: createSlug(record.fields.company || '')
+      slug: createSlug(record.fields.lookbookCompanyName || record.fields.company || ''),
+      introductionsNeeded: record.fields.introductionsNeeded || '',
+      specificSupport: record.fields.specificSupport || ''
     }));
   } catch (error) {
     if (error instanceof AirtableError) {
@@ -83,19 +88,44 @@ export const fetchCompanyBySlug = async (slug: string): Promise<Company | null> 
   }
 
   try {
-    // Convert slug back to company name format (capitalize first letter of each word)
-    const companyName = slug
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+    // Get all companies and find the one with matching slug
+    const companies = await fetchCompanies();
+    const company = companies.find(c => c.slug === slug);
+    
+    if (!company) {
+      return null;
+    }
 
-    const filterByFormula = encodeURIComponent(`company='${companyName}'`);
-    const url = `https://api.airtable.com/v0/${baseId}/${tableId}?filterByFormula=${filterByFormula}`;
+    return company;
+  } catch (error) {
+    if (error instanceof AirtableError) {
+      throw error;
+    }
+    throw new AirtableError('Failed to fetch company by slug');
+  }
+};
+
+export const updateCompanyField = async (companyId: string, field: string, value: string): Promise<void> => {
+  const { token, baseId, tableId } = getAirtableConfig();
+  
+  if (!token || !baseId || !tableId) {
+    throw new AirtableError('Airtable API credentials not configured in environment variables');
+  }
+
+  try {
+    const url = `https://api.airtable.com/v0/${baseId}/${tableId}/${companyId}`;
     
     const response = await fetch(url, {
+      method: 'PATCH',
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        fields: {
+          [field]: value
+        }
+      })
     });
 
     if (!response.ok) {
@@ -108,33 +138,15 @@ export const fetchCompanyBySlug = async (slug: string): Promise<Company | null> 
       }
       
       throw new AirtableError(
-        `Failed to fetch company: ${response.status} ${response.statusText}`,
+        `Failed to update company field: ${response.status} ${response.statusText}`,
         response.status,
         errorDetails
       );
     }
-
-    const data = await response.json();
-    
-    if (data.records.length === 0) {
-      return null;
-    }
-
-    const record = data.records[0];
-    return {
-      id: record.id,
-      company: record.fields.company || '',
-      URL: record.fields.URL || '',
-      companyLinkedIn: record.fields.companyLinkedIn || '',
-      logo: record.fields.logo?.[0]?.url || '/placeholder.svg',
-      oneLiner: record.fields.oneLiner || '',
-      founders: record.fields.founders || '',
-      slug: createSlug(record.fields.company || '')
-    };
   } catch (error) {
     if (error instanceof AirtableError) {
       throw error;
     }
-    throw new AirtableError('Failed to fetch company by slug');
+    throw new AirtableError('Failed to update company field: Network error or invalid response');
   }
 }; 

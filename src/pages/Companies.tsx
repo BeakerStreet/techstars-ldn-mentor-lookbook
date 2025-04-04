@@ -6,7 +6,7 @@ import BottomNav from '../components/BottomNav';
 import AnimatedPageTransition from '../components/AnimatedPageTransition';
 import CompanyCard from '../components/CompanyCard';
 
-const Founders = () => {
+const Companies = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -70,4 +70,4 @@ const Founders = () => {
   );
 };
 
-export default Founders; 
+export default Companies; 

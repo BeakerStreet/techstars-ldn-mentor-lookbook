@@ -14,6 +14,7 @@ export interface Founder {
   date: string;
   lookbookLabel: string;
   lookbookTag: ('Investor' | 'Operator')[] | undefined;
+  lookbookBio: string;
   // Founder-specific fields
   companyStage: string;
   companyDescription: string;

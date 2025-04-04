@@ -1,13 +1,18 @@
 import { Link } from 'react-router-dom';
 import { Company } from '../types/company';
 import { Linkedin, Globe } from 'lucide-react';
+import { createSlug } from '../services/companyAirtableService';
 
 interface CompanyCardProps {
   company: Company;
 }
 
 const CompanyCard = ({ company }: CompanyCardProps) => {
-  const slug = company.company.toLowerCase().replace(/\s+/g, '-');
+  const slug = createSlug(company.lookbookCompanyName);
+  console.log('Debug - CompanyCard slug creation:', {
+    originalCompanyName: company.company,
+    createdSlug: slug
+  });
   const firstLetter = company.company.charAt(0).toUpperCase();
 
   return (
@@ -41,7 +46,20 @@ const CompanyCard = ({ company }: CompanyCardProps) => {
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
           <h3 className="text-lg font-semibold">{company.company}</h3>
-          <p className="text-sm opacity-90">{company.oneLiner}</p>
+          <p className="text-sm opacity-90 mb-2">{company.oneLiner}</p>
+          {(company.introductionsNeeded || company.specificSupport) && (
+            <div className="text-sm">
+              <p className="font-medium mb-1">Looking for help with:</p>
+              <ul className="list-disc pl-4 space-y-1 opacity-90">
+                {company.introductionsNeeded && (
+                  <li><span className="font-medium">Introductions to:</span> {company.introductionsNeeded}</li>
+                )}
+                {company.specificSupport && (
+                  <li><span className="font-medium">Specific support with:</span> {company.specificSupport}</li>
+                )}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </Link>
