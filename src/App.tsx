@@ -7,7 +7,7 @@ import Index from "./pages/Index";
 import MentorDetail from "./pages/MentorDetail";
 import NotFound from "./pages/NotFound";
 import AdditionalMentors from "./pages/AdditionalMentors";
-import Founders from "./pages/Founders";
+import Companies from "./pages/Companies";
 import FounderDetail from "./pages/FounderDetail";
 import CompanyDetail from "./pages/CompanyDetail";
 
@@ -23,7 +23,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/mentor/:slug" element={<MentorDetail />} />
           <Route path="/additional-mentors" element={<AdditionalMentors />} />
-          <Route path="/founders" element={<Founders />} />
+          <Route path="/companies" element={<Companies />} />
           <Route path="/founders/:slug" element={<FounderDetail />} />
           <Route path="/companies/:slug" element={<CompanyDetail />} />
           <Route path="*" element={<NotFound />} />

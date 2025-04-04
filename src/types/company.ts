@@ -8,4 +8,6 @@ export interface Company {
   oneLiner: string;
   founders: string;
   slug: string;
+  introductionsNeeded?: string;
+  specificSupport?: string;
 } 

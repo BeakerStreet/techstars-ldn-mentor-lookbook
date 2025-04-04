@@ -68,7 +68,9 @@ export const fetchCompanies = async (): Promise<Company[]> => {
       logo: record.fields.logo?.[0]?.url || '',
       oneLiner: record.fields.oneLiner || '',
       founders: record.fields.founders || '',
-      slug: createSlug(record.fields.lookbookCompanyName || record.fields.company || '')
+      slug: createSlug(record.fields.lookbookCompanyName || record.fields.company || ''),
+      introductionsNeeded: record.fields.introductionsNeeded || '',
+      specificSupport: record.fields.specificSupport || ''
     }));
   } catch (error) {
     if (error instanceof AirtableError) {

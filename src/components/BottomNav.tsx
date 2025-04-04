@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 const BottomNav = () => {
   const location = useLocation();
-  const isFounderPage = location.pathname === '/founders';
+  const isCompaniesPage = location.pathname === '/companies';
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-t border-gray-100">
@@ -12,7 +12,7 @@ const BottomNav = () => {
         </div>
         
         <div>
-          {isFounderPage ? (
+          {isCompaniesPage ? (
             <Link 
               to="/"
               className="text-sm text-techstars-slate hover:text-techstars-phosphor transition-colors duration-300"
@@ -21,7 +21,7 @@ const BottomNav = () => {
             </Link>
           ) : (
             <Link 
-              to="/founders"
+              to="/companies"
               className="text-sm text-techstars-slate hover:text-techstars-phosphor transition-colors duration-300"
             >
               Go to cohort
