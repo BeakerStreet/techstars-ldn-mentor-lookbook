@@ -1,5 +1,5 @@
 import { Company } from '../types/company';
-import { Linkedin, Globe, HelpCircle, Save } from 'lucide-react';
+import { Linkedin, Globe, HelpCircle, Save, FileText } from 'lucide-react';
 import { useState } from 'react';
 import { updateCompanyField } from '../services/companyAirtableService';
 
@@ -152,6 +152,17 @@ const CompanyHeader = ({ company }: CompanyHeaderProps) => {
             >
               <Globe size={20} />
               <span>Company Website</span>
+            </a>
+          )}
+          {company.notionInvestmentMemo && (
+            <a
+              href={company.notionInvestmentMemo}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-techstars-slate hover:text-techstars-phosphor transition-colors"
+            >
+              <FileText size={20} />
+              <span>Investment Memo</span>
             </a>
           )}
         </div>
