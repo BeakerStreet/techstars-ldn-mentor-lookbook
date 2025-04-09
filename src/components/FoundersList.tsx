@@ -119,7 +119,6 @@ const FoundersList = ({ founders }: FoundersListProps) => {
                 )}
                 <div className="mt-4">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xl font-semibold">Lookbook Bio</h4>
                     {editingFounderId === founder.id ? (
                       <button
                         onClick={() => handleSave(founder)}

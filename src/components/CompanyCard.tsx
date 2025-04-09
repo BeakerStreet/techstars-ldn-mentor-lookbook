@@ -39,7 +39,7 @@ const CompanyCard = ({ company }: CompanyCardProps) => {
         )}
       </div>
       
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/80 to-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
           <h3 className="text-lg font-semibold">{company.company}</h3>
           <p className="text-sm opacity-90 mb-2">{company.oneLiner}</p>
