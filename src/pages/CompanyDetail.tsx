@@ -16,6 +16,7 @@ const CompanyDetail = () => {
   const [founders, setFounders] = useState<Founder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [founderError, setFounderError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadCompanyAndFounders = async () => {
@@ -39,14 +40,23 @@ const CompanyDetail = () => {
 
         // Fetch details for each founder
         const founderPromises = founderNames.map(async (name) => {
-          const founderSlug = name.toLowerCase().replace(/\s+/g, '-');
-          const founderData = await fetchFounderBySlug(founderSlug);
-          return founderData;
+          try {
+            const founderSlug = name.toLowerCase().replace(/\s+/g, '-');
+            const founderData = await fetchFounderBySlug(founderSlug);
+            return founderData;
+          } catch (err) {
+            console.error(`Error fetching founder ${name}:`, err);
+            return null;
+          }
         });
 
         const founderResults = await Promise.all(founderPromises);
         const validFounders = founderResults.filter((f): f is Founder => f !== null);
         setFounders(validFounders);
+
+        if (validFounders.length === 0 && founderNames.length > 0) {
+          setFounderError('Unable to load founder details');
+        }
 
       } catch (err) {
         setError('Failed to load company details. Please try again later.');
@@ -82,7 +92,11 @@ const CompanyDetail = () => {
           ) : company ? (
             <div className="space-y-8">
               <CompanyHeader company={company} />
-              <FoundersList founders={founders} />
+              {founderError ? (
+                <div className="text-center text-yellow-500 py-4">{founderError}</div>
+              ) : (
+                <FoundersList founders={founders} />
+              )}
             </div>
           ) : (
             <div className="text-center text-techstars-slate py-20">Company not found</div>

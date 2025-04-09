@@ -3,23 +3,15 @@ import { Founder } from '../types/founder';
 // Get configuration from environment variables
 export const getFounderAirtableConfig = () => {
   return {
-    token: import.meta.env.VITE_FOUNDER_AIRTABLE_API_TOKEN || '',
-    baseId: import.meta.env.VITE_FOUNDER_AIRTABLE_BASE_ID || '',
-    tableId: import.meta.env.VITE_FOUNDER_AIRTABLE_TABLE_ID || 'tbl0QMMe09tybCQ0K'  // Fallback to the known ID
+    token: import.meta.env.VITE_FOUNDER_ONBOARDING_AIRTABLE_API_TOKEN || '',
+    baseId: import.meta.env.VITE_FOUNDER_ONBOARDING_AIRTABLE_BASE_ID || '',
+    tableId: import.meta.env.VITE_FOUNDER_ONBOARDING_AIRTABLE_TABLE_ID || 'tbldVJRW3MbvxyHAv'  // Fallback to the known ID
   };
 };
 
 export const isFounderAirtableConfigured = () => {
   const { token, baseId } = getFounderAirtableConfig();
   return !!token && !!baseId;
-};
-
-const getFounderOnboardingConfig = () => {
-  return {
-    token: import.meta.env.VITE_FOUNDER_ONBOARDING_AIRTABLE_API_TOKEN || '',
-    baseId: import.meta.env.VITE_FOUNDER_ONBOARDING_AIRTABLE_BASE_ID || '',
-    tableId: import.meta.env.VITE_FOUNDER_ONBOARDING_AIRTABLE_TABLE_ID || 'tbldVJRW3MbvxyHAv'
-  };
 };
 
 class AirtableError extends Error {
@@ -131,7 +123,7 @@ export async function fetchFounders(): Promise<Founder[]> {
 }
 
 async function fetchFounderLookbookBio(founderName: string): Promise<string> {
-  const { token, baseId, tableId } = getFounderOnboardingConfig();
+  const { token, baseId, tableId } = getFounderAirtableConfig();
   
   if (!token || !baseId) {
     console.warn('Founder onboarding Airtable config not found');
@@ -180,8 +172,9 @@ export async function fetchFounderBySlug(slug: string): Promise<Founder | null> 
   }
 
   try {
+    // Remove lookbookInclude filter since it's not needed for founders
     const filterByFormula = encodeURIComponent(
-      `AND(lookbookInclude='TRUE', Name='${slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}')`
+      `Name='${slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}'`
     );
     const url = `https://api.airtable.com/v0/${baseId}/${tableId}?filterByFormula=${filterByFormula}&_=${Date.now()}`;
     
@@ -279,7 +272,7 @@ function createSlug(name: string): string {
 }
 
 export const updateFounderOnboardingField = async (founderName: string, field: string, value: string): Promise<void> => {
-  const { token, baseId, tableId } = getFounderOnboardingConfig();
+  const { token, baseId, tableId } = getFounderAirtableConfig();
   
   if (!token || !baseId) {
     throw new AirtableError('Founder onboarding Airtable config not configured in environment variables');

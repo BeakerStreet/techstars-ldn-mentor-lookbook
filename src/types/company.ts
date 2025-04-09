@@ -7,7 +7,6 @@ export interface Company {
   logo: string;
   oneLiner: string;
   founders: string;
-  slug: string;
   introductionsNeeded?: string;
   specificSupport?: string;
 } 

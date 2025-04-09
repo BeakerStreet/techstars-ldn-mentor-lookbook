@@ -8,12 +8,8 @@ interface CompanyCardProps {
 }
 
 const CompanyCard = ({ company }: CompanyCardProps) => {
-  const slug = createSlug(company.lookbookCompanyName);
-  console.log('Debug - CompanyCard slug creation:', {
-    originalCompanyName: company.company,
-    createdSlug: slug
-  });
   const firstLetter = company.company.charAt(0).toUpperCase();
+  const slug = createSlug(company.lookbookCompanyName);
 
   return (
     <Link

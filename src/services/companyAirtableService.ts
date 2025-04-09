@@ -17,10 +17,7 @@ class AirtableError extends Error {
 }
 
 function createSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^\w\s]/gi, '')
-    .replace(/\s+/g, '-');
+  return name.toLowerCase().replace(/\s+/g, '-');
 }
 
 export { createSlug };
@@ -62,13 +59,12 @@ export const fetchCompanies = async (): Promise<Company[]> => {
     return data.records.map((record: any) => ({
       id: record.id,
       company: record.fields.company || '',
-      lookbookCompanyName: record.fields.lookbookCompanyName || record.fields.company || '',
+      lookbookCompanyName: record.fields.lookbookCompanyName || '',
       URL: record.fields.URL || '',
       companyLinkedIn: record.fields.companyLinkedIn || '',
       logo: record.fields.logo?.[0]?.url || '',
       oneLiner: record.fields.oneLiner || '',
       founders: record.fields.founders || '',
-      slug: createSlug(record.fields.lookbookCompanyName || record.fields.company || ''),
       introductionsNeeded: record.fields.introductionsNeeded || '',
       specificSupport: record.fields.specificSupport || ''
     }));
@@ -90,7 +86,7 @@ export const fetchCompanyBySlug = async (slug: string): Promise<Company | null> 
   try {
     // Get all companies and find the one with matching slug
     const companies = await fetchCompanies();
-    const company = companies.find(c => c.slug === slug);
+    const company = companies.find(c => createSlug(c.lookbookCompanyName) === slug);
     
     if (!company) {
       return null;
