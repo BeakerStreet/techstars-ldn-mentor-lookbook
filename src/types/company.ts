@@ -9,4 +9,5 @@ export interface Company {
   founders: string;
   introductionsNeeded?: string;
   specificSupport?: string;
+  notionInvestmentMemo?: string;
 } 

@@ -66,7 +66,8 @@ export const fetchCompanies = async (): Promise<Company[]> => {
       oneLiner: record.fields.oneLiner || '',
       founders: record.fields.founders || '',
       introductionsNeeded: record.fields.introductionsNeeded || '',
-      specificSupport: record.fields.specificSupport || ''
+      specificSupport: record.fields.specificSupport || '',
+      notionInvestmentMemo: record.fields.notionInvestmentMemo || ''
     }));
   } catch (error) {
     if (error instanceof AirtableError) {
